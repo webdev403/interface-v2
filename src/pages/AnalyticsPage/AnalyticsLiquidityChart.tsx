@@ -91,12 +91,12 @@ const AnalyticsLiquidityChart: React.FC<{
         <span className='text-disabled text-bold text-uppercase'>
           {t('liquidity')}
         </span>
-        <ChartType
+        {/* <ChartType
           typeTexts={GlobalData.analytics.CHART_DURATION_TEXTS}
           chartTypes={GlobalData.analytics.CHART_DURATIONS}
           chartType={durationIndex}
           setChartType={setDurationIndex}
-        />
+        /> */}
       </Box>
       {globalData && (
         <Box mt={0.5} className='flex items-center'>
@@ -125,7 +125,7 @@ const AnalyticsLiquidityChart: React.FC<{
         ) : globalChartData ? (
           <AreaChart
             data={globalChartData.map((value: any) =>
-              Number(value.totalLiquidityUSD),
+              Number(value.totalLiquidityUSD)
             )}
             strokeColor={version === 'v2' ? '#00dced' : '#3e92fe'}
             gradientColor={version === 'v2' ? undefined : '#448aff'}

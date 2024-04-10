@@ -4,6 +4,7 @@ import Chart from 'react-apexcharts';
 import { useIsDarkMode } from 'state/user/hooks';
 import { formatCompact, formatDateFromTimeStamp, formatNumber } from 'utils';
 import 'components/styles/AreaChart.scss';
+import { Position } from 'v3lib/entities';
 
 export interface AreaChartProps {
   strokeColor?: string;
@@ -17,6 +18,7 @@ export interface AreaChartProps {
   height?: number | string;
   yAxisTicker?: string | undefined;
 }
+
 const AreaChart: React.FC<AreaChartProps> = ({
   strokeColor = '#00dced',
   backgroundColor = '#004ce6',
@@ -57,9 +59,9 @@ const AreaChart: React.FC<AreaChartProps> = ({
       enabled: false,
     },
     stroke: {
-      width: 2,
+      width: 1,
       colors: [strokeColor],
-      curve: 'smooth' as any,
+      curve: 'straight' as any,
     },
     markers: {
       colors: [strokeColor],
@@ -67,13 +69,14 @@ const AreaChart: React.FC<AreaChartProps> = ({
     },
     fill: {
       type: 'gradient',
-      colors: [_gradientColor],
+      colors: ['#2D244A', '#2E3350'],
+      // colors: [_gradientColor],
       gradient: {
         gradientToColors: [backgroundColor],
         shadeIntensity: 1,
-        opacityFrom: 0.5,
-        opacityTo: 0.15,
-        stops: [0, 100],
+        opacityFrom: 1,
+        opacityTo: 1,
+        stops: [100, 100],
       },
     },
     xaxis: {
@@ -102,7 +105,9 @@ const AreaChart: React.FC<AreaChartProps> = ({
       tickAmount: yAxisValues?.length,
     },
     grid: {
-      show: false,
+      show: true,
+      borderColor: '#35383F',
+      strokeDashArray: 2,
       padding: {
         left: 0,
         right: 0,
@@ -118,16 +123,27 @@ const AreaChart: React.FC<AreaChartProps> = ({
     },
     tooltip: {
       enabled: true,
+      fixed: {
+        enabled: true,
+        position: 'topRight'
+      },
       theme: dark ? 'dark' : 'light',
       fillSeriesColor: false,
       custom: ({ series, seriesIndex, dataPointIndex }: any) => {
-        return `<div class="areaChartTooltip"><small>${formatDateFromTimeStamp(
-          dates[dataPointIndex],
-          'MMM DD, YYYY',
-        )}</small><small><b>
+        console.log(series, seriesIndex);
+
+        return `<div class="areaChartTooltip">
+        <small>
+        
         ${yAxisTicker === '$' ? yAxisTicker : ''}${formatCompact(
-          series[seriesIndex][dataPointIndex],
-        )}${yAxisTicker === '%' ? yAxisTicker : ''}
+          series[0][dataPointIndex]
+        )}${`  ::  V3`}
+        <br/>
+        ${yAxisTicker === '$' ? yAxisTicker : ''}${formatCompact(
+          series[1][dataPointIndex],
+        )}${`  ::  V2`}
+        
+        ${yAxisTicker === '%' ? yAxisTicker : ''}
       </b></small></div>`;
       },
     },
@@ -137,6 +153,42 @@ const AreaChart: React.FC<AreaChartProps> = ({
     {
       name: 'Prices',
       data,
+    },
+    {
+      name: 'series2',
+      data: [
+        109511148.4843072,
+        113370088.54691145,
+        109970728.56533167,
+        102080242.86645125,
+        109840148.4546114,
+        109113786.57517724,
+        106422967.00566256,
+        107217643.11440271,
+        109413875.22109869,
+        113093868.35785942,
+        113006658.09689197,
+        111679925.83221972,
+        112455255.96256065,
+        112066937.25818029,
+        111658875.5353449,
+        114023339.91381237,
+        112340468.15577659,
+        107365559.35197815,
+        108180118.53027882,
+        109108570.8797974,
+        108060862.21907496,
+        109887091.9060419,
+        111430545.252828,
+        114883923.70177002,
+        111457597.36599386,
+        121023746.42659517,
+        122651170.27757907,
+        119781332.21643046,
+        123072429.13387161,
+        120112608.92062685,
+        115582663.59049138,
+      ],
     },
   ];
 
@@ -156,7 +208,7 @@ const AreaChart: React.FC<AreaChartProps> = ({
           ))}
         </Box>
       </Box>
-      {yAxisValues && (
+      {/* {yAxisValues && (
         <Box className='yAxis'>
           {yAxisValues.map((value, index) => (
             <p key={index}>
@@ -168,7 +220,7 @@ const AreaChart: React.FC<AreaChartProps> = ({
             </p>
           ))}
         </Box>
-      )}
+      )} */}
     </Box>
   );
 };
