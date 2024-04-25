@@ -158,6 +158,7 @@
     "sass": "^1.51.0",
     "slick-carousel": "^1.8.1",
     "tiny-warning": "^1.0.3",
+    "vm-browserify": "^1.1.2",
     "wido": "^0.4.1"
   }
 }
