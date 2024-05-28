@@ -128,6 +128,7 @@
     "@walletconnect/modal": "^2.5.4",
     "@web3-react/coinbase-wallet": "^8.2.2",
     "@web3-react/gnosis-safe": "^8.2.3",
+    "@web3-react/types": "^8.2.3",
     "apexcharts": "3.32.1",
     "hypelab-react": "^0.4.4",
     "i18next": "^22.4.12",
@@ -143,7 +144,7 @@
     "react-i18next": "^12.2.0",
     "react-slick": "^0.29.0",
     "react-virtuoso": "^4.1.0",
-    "sass": "^1.51.0",
+    "sass": "^1.77.2",
     "slick-carousel": "^1.8.1"
   }
 }
