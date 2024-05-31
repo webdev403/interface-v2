@@ -6,7 +6,7 @@ import { useIsSupportedNetwork } from 'utils';
 import { useActiveWeb3React } from 'hooks';
 import {
   useWalletModalToggle,
-  useNetworkSelectionModalToggle,
+  useOpenNetworkSelection,
 } from 'state/application/hooks';
 import { useTranslation } from 'next-i18next';
 import styles from 'styles/pages/Home.module.scss';
@@ -25,13 +25,14 @@ const HeroSection: React.FC = () => {
   const { chainId, account } = useActiveWeb3React();
   const chainIdToUse = chainId ?? ChainId.MATIC;
   const toggleWalletModal = useWalletModalToggle();
-  const toggleNetworkSelectionModal = useNetworkSelectionModalToggle();
+  const { setOpenNetworkSelection } = useOpenNetworkSelection();
   const { t } = useTranslation();
   const config = getConfig(chainIdToUse);
   const v2 = config['v2'];
   const v3 = config['v3'];
+  const lairAvailable = config['lair']['newLair'];
 
-  const lairInfo = useNewLairInfo();
+  const lairInfo = useNewLairInfo(!lairAvailable);
   const quickToken = DLQUICK[chainIdToUse];
   const {
     loading: loadingQuickPrice,
@@ -57,10 +58,13 @@ const HeroSection: React.FC = () => {
   }, [lairInfo, quickPrice]);
 
   const loading =
-    (v2 ? loadingV2GlobalData : false) ||
-    (v3 ? loadingV3GlobalData : false) ||
-    loadingQuickPrice ||
-    lairInfo?.loading;
+    ((v2 ? loadingV2GlobalData : false) ||
+      (v3 ? loadingV3GlobalData : false)) &&
+    (loadingQuickPrice || lairInfo?.loading);
+
+  function toggleNetworkSelectionModal() {
+    throw new Error('Function not implemented.');
+  }
 
   return (
     <Box className={styles.heroSection}>

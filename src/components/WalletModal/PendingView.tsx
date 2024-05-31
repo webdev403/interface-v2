@@ -4,6 +4,8 @@ import Option from './Option';
 import { useTranslation } from 'next-i18next';
 import { Connection, getConnections } from 'connectors';
 import styles from 'styles/components/WalletModal.module.scss';
+import { useWeb3React } from '@web3-react/core';
+import { ChainId } from '@uniswap/sdk';
 
 interface PendingViewProps {
   connection?: Connection;
@@ -19,7 +21,10 @@ const PendingView: React.FC<PendingViewProps> = ({
   tryActivation,
 }) => {
   const { t } = useTranslation();
-  const connections = getConnections();
+  const { chainId } = useWeb3React();
+  const localChainId = localStorage.getItem('localChainId');
+  const chainIdToUse = chainId ?? Number(localChainId ?? ChainId.MATIC);
+  const connections = getConnections(chainIdToUse);
 
   return (
     <Box className={styles.pendingSection}>

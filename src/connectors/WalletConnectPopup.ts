@@ -1,7 +1,6 @@
 import { SUPPORTED_CHAINIDS } from 'constants/index';
 import { WalletConnect, WalletConnectConstructorArgs } from './WalletConnect';
-import  {QrModalOptions}  from '@walletconnect/ethereum-provider/dist/types/types';
-
+import { QrModalOptions } from '@walletconnect/ethereum-provider/dist/types/types';
 
 export class WalletConnectPopup extends WalletConnect {
   constructor({

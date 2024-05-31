@@ -6,7 +6,6 @@ import {
   updateBlockNumber,
   ApplicationModal,
   setOpenModal,
-  updateEthPrice,
   addBookMarkToken,
   removeBookmarkToken,
   updateBookmarkTokens,
@@ -18,6 +17,7 @@ import {
   updateIsV2,
   updateUDDomain,
   updateSoulZap,
+  updateOpenNetworkSelection,
 } from './actions';
 import { SoulZap_UniV2_ApeBond } from '@soulsolidity/soulzap-v1';
 
@@ -61,6 +61,7 @@ export interface ApplicationState {
   readonly isV2: boolean | undefined;
   readonly udDomain: string | undefined;
   readonly soulZap: SoulZap_UniV2_ApeBond | null | undefined;
+  readonly openNetworkSelection: boolean;
 }
 
 const initialState: ApplicationState = {
@@ -78,6 +79,7 @@ const initialState: ApplicationState = {
   isV2: undefined,
   udDomain: undefined,
   soulZap: undefined,
+  openNetworkSelection: false,
 };
 
 export default createReducer(initialState, (builder) =>
@@ -119,16 +121,6 @@ export default createReducer(initialState, (builder) =>
         }
       });
     })
-    .addCase(
-      updateEthPrice,
-      (state, { payload: { price, oneDayPrice, ethPriceChange } }) => {
-        state.ethPrice = {
-          price,
-          oneDayPrice,
-          ethPriceChange,
-        };
-      },
-    )
     .addCase(
       updateMaticPrice,
       (state, { payload: { price, oneDayPrice, maticPriceChange } }) => {
@@ -199,5 +191,8 @@ export default createReducer(initialState, (builder) =>
     })
     .addCase(updateSoulZap, (state, { payload }) => {
       state.soulZap = payload;
+    })
+    .addCase(updateOpenNetworkSelection, (state, { payload }) => {
+      state.openNetworkSelection = payload;
     }),
 );

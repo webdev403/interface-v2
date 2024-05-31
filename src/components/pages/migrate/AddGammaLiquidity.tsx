@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'next-i18next';
-import { useActivePreset } from 'state/mint/v3/hooks';
+import { useActivePreset,useV3DerivedMintInfo } from 'state/mint/v3/hooks';
 import { Currency, CurrencyAmount } from '@uniswap/sdk-core';
 import { ETHER, JSBI, WETH } from '@uniswap/sdk';
 import { useActiveWeb3React } from 'hooks';
@@ -28,6 +28,7 @@ const AddGammaLiquidity: React.FC<{
   onLiquidityAdded?: () => void;
 }> = ({ token0Value, token1Value, showAdd, onLiquidityAdded }) => {
   const { t } = useTranslation();
+  const mintInfo = useV3DerivedMintInfo();
   const [wrappingETH, setWrappingETH] = useState(false);
   const [addingLiquidity, setAddingLiquidity] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -39,6 +40,7 @@ const AddGammaLiquidity: React.FC<{
     chainId,
     token0?.address,
     token1?.address,
+    mintInfo.feeAmount,
   );
   const gammaPair = gammaPairData?.pairs ?? [];
   const gammaPairReverted = gammaPairData?.reversed;

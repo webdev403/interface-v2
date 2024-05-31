@@ -115,7 +115,7 @@ export class WalletConnect extends Connector {
       //@ts-ignore
       const provider = (this.provider = await ethProviderModule.default.init({
         ...this.options,
-        chains,
+        chains: chains as any,
         rpcMap: await rpcMap,
       }));
 

@@ -20,11 +20,13 @@ import {
   updateSelectedWallet,
   updateUserLiquidityHub,
   updateUserZapSlippage,
+  updateIsInfiniteApproval,
 } from './actions';
 import { ConnectionType } from 'connectors';
 
 const currentTimestamp = () => new Date().getTime();
 export const INITIAL_ZAP_SLIPPAGE = 100;
+export const SLIPPAGE_AUTO = 0;
 
 export interface UserState {
   // the timestamp of the last updateVersion action
@@ -63,6 +65,7 @@ export interface UserState {
   userSingleHopOnly: boolean; // only allow swaps on direct pairs
   selectedWallet?: ConnectionType;
   userZapSlippage: number;
+  isInfiniteApproval: boolean;
 }
 
 function pairKey(token0Address: string, token1Address: string) {
@@ -85,6 +88,7 @@ export const initialState: UserState = {
   userSingleHopOnly: false,
   selectedWallet: undefined,
   userZapSlippage: INITIAL_ZAP_SLIPPAGE,
+  isInfiniteApproval: false,
 };
 
 export default createReducer(initialState, (builder) =>
@@ -186,5 +190,8 @@ export default createReducer(initialState, (builder) =>
     })
     .addCase(updateUserZapSlippage, (state, action) => {
       state.userZapSlippage = action.payload.userZapSlippage;
+    })
+    .addCase(updateIsInfiniteApproval, (state, action) => {
+      state.isInfiniteApproval = action.payload.isInfiniteApproval;
     }),
 );

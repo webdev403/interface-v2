@@ -73,6 +73,7 @@ function TWAPBase({ limit }: { limit?: boolean }) {
         dstTokenAddress: value.dstToken.address,
         dstTokenSymbol: value.dstToken.symbol,
         dstTokenUsdValue: Number(value.dstUSD),
+        chainId,
       };
       if (limit) {
         liquidityHubAnalytics.onLimitTrade(args);
@@ -80,7 +81,7 @@ function TWAPBase({ limit }: { limit?: boolean }) {
         liquidityHubAnalytics.onTwapTrade(args);
       }
     },
-    [limit],
+    [limit, chainId],
   );
 
   return (
@@ -105,10 +106,5 @@ function TWAPBase({ limit }: { limit?: boolean }) {
     </>
   );
 }
-export const TWAP = () => {
-  return <TWAPBase />;
-};
 
-export const Limit = () => {
-  return <TWAPBase limit />;
-};
+export default TWAPBase;

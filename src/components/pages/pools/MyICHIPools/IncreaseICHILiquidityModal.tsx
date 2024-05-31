@@ -6,10 +6,10 @@ import {
   TransactionConfirmationModal,
   TransactionErrorContent,
 } from 'components';
-import { Box, Button } from '@mui/material';
+import { Box, Button } from '@material-ui/core';
 import { Close } from '@mui/icons-material';
-import { useTranslation } from 'next-i18next';
-import { calculateGasMargin, formatNumber } from 'utils';
+import { useTranslation } from 'react-i18next';
+import { calculateGasMargin, formatNumber, getFixedValue } from 'utils';
 import { useActiveWeb3React } from 'hooks';
 import {
   useTransactionAdder,
@@ -22,13 +22,21 @@ import { useWETHContract } from 'hooks/useContract';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
 import { WrappedCurrency } from 'models/types';
 import { SupportedDex, deposit } from '@ichidao/ichi-vaults-sdk';
-import { ICHIVault, useICHIVaultDepositData } from 'hooks/useICHIData';
 import styles from 'styles/pages/pools/AutomaticLPItemDetails.module.scss';
+import {
+  ICHIVault,
+  useICHIVaultApproval,
+  useICHIVaultDepositData,
+} from 'hooks/useICHIData';
+import { BigNumber } from 'ethers';
 
 interface IncreaseICHILiquidityModalProps {
   open: boolean;
   onClose: () => void;
   position: ICHIVault;
+}
+interface CustomError extends Error {
+  code?: number;
 }
 
 export default function IncreaseICHILiquidityModal({
@@ -44,11 +52,17 @@ export default function IncreaseICHILiquidityModal({
   const currency = position.allowToken0 ? position.token0 : position.token1;
   const {
     data: { isNativeToken, availableAmount, tokenIdx },
-  } = useICHIVaultDepositData(Number(typedValue), currency, position);
+  } = useICHIVaultDepositData(typedValue, currency, position);
+
+  const { isLoading: loadingApproved, data: isApproved } = useICHIVaultApproval(
+    position,
+    Number(typedValue),
+    tokenIdx,
+  );
 
   const typedValueJSBI = JSBI.BigInt(
     parseUnits(
-      !typedValue ? '0' : Number(typedValue).toFixed(position.token0?.decimals),
+      !typedValue ? '0' : getFixedValue(typedValue, position.token0?.decimals),
       position.token0?.decimals,
     ),
   );
@@ -60,12 +74,14 @@ export default function IncreaseICHILiquidityModal({
   const [txPending, setTxPending] = useState(false);
   const addTransaction = useTransactionAdder();
   const finalizedTransaction = useTransactionFinalizer();
+  const [approving, setApproving] = useState(false);
 
   const buttonDisabled =
     !Number(typedValue) ||
     !account ||
     JSBI.greaterThan(typedValueJSBI, availableAmount) ||
-    wrappingETH;
+    wrappingETH ||
+    loadingApproved;
 
   const wrapAmount = useMemo(() => {
     if (isNativeToken && JSBI.greaterThan(typedValueJSBI, availableAmount))
@@ -82,6 +98,8 @@ export default function IncreaseICHILiquidityModal({
         symbol: position.token0?.symbol,
       });
     if (!Number(typedValue)) return t('enterAmount');
+    if (!isApproved)
+      return `${approving ? t('approving') : t('approve')} ${currency?.symbol}`;
     if (wrapAmount) return t('wrapMATIC', { symbol: ETHER[chainId].symbol });
     return t('addLiquidity');
   }, [
@@ -93,6 +111,9 @@ export default function IncreaseICHILiquidityModal({
     availableAmount,
     position.token0?.symbol,
     typedValue,
+    isApproved,
+    approving,
+    currency?.symbol,
     wrapAmount,
   ]);
 
@@ -140,14 +161,46 @@ export default function IncreaseICHILiquidityModal({
     }
   };
 
+  const approveICHI = async () => {
+    if (!account || !provider) return;
+    setApproving(true);
+    try {
+      const response = await deposit(
+        account,
+        tokenIdx === 0 ? Number(typedValue) : 0,
+        tokenIdx === 1 ? Number(typedValue) : 0,
+        position.address,
+        provider,
+        SupportedDex.Quickswap,
+      );
+      const summary = t('approve', {
+        symbol: currency?.symbol,
+      });
+      addTransaction(response, {
+        summary,
+      });
+      const receipt = await response.wait();
+      finalizedTransaction(receipt, {
+        summary,
+      });
+      setApproving(false);
+    } catch (error) {
+      const err = error as CustomError;
+      console.error('Failed to send transaction', error);
+      setApproving(false);
+      const errorMessage = (err?.code === 4001 ? t('txRejected') : t('errorInTx')) || '';
+    setAddErrorMessage(errorMessage);
+    }
+  };
+
   const addICHILiquidity = async () => {
     if (!account || !provider) return;
     setAttemptingTxn(true);
     try {
       const response = await deposit(
         account,
-        tokenIdx === 0 ? Number(typedValue) : 0,
-        tokenIdx === 1 ? Number(typedValue) : 0,
+        tokenIdx === 0 ? BigNumber.from(typedValueJSBI.toString()) : 0,
+        tokenIdx === 1 ? BigNumber.from(typedValueJSBI.toString()) : 0,
         position.address,
         provider,
         SupportedDex.Quickswap,
@@ -268,14 +321,11 @@ export default function IncreaseICHILiquidityModal({
             }}
             onMax={() => {
               setTypedValue(
-                formatUnits(
-                  availableAmount.toString(),
-                  position.token0?.decimals,
-                ),
+                formatUnits(availableAmount.toString(), currency?.decimals),
               );
             }}
             showMaxButton={!JSBI.equal(availableAmount, typedValueJSBI)}
-            currency={position.token0 as WrappedCurrency}
+            currency={currency as WrappedCurrency}
             id='add-ichi-liquidity-input-tokena'
             shallow={true}
             disabled={false}
@@ -287,7 +337,13 @@ export default function IncreaseICHILiquidityModal({
           <Button
             className={styles.liquidityItemButton}
             disabled={buttonDisabled}
-            onClick={() => (wrapAmount ? wrapETH() : setShowConfirm(true))}
+            onClick={() =>
+              !isApproved
+                ? approveICHI()
+                : wrapAmount
+                ? wrapETH()
+                : setShowConfirm(true)
+            }
             fullWidth
           >
             {buttonText}

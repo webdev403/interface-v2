@@ -1,18 +1,21 @@
 import React, { useState } from 'react';
 import {
   Box,
-  Grid,
-  useTheme,
-  useMediaQuery,
   Button,
   CircularProgress,
-} from '@mui/material';
-import { useRouter } from 'next/router';
-import styles from 'styles/components/Footer.module.scss';
-import { useTranslation } from 'next-i18next';
+  Grid,
+  useMediaQuery,
+} from '@material-ui/core';
+import { useTheme } from '@material-ui/core/styles';
+import QUICKLogo from 'assets/images/quickLogo.png';
+import QUICKLogoWebP from 'assets/images/quickLogo.webp';
+import 'components/styles/Footer.scss';
+import { Link, useHistory, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useSubscribeNewsletter } from 'hooks/useNewsletterSignup';
 import Image from 'next/image';
-
+import styles from 'styles/components/Footer.module.scss';
+import { useRouter } from 'next/router';
 const Footer: React.FC = () => {
   const router = useRouter();
   const copyrightYear = new Date().getFullYear();
@@ -134,14 +137,9 @@ const Footer: React.FC = () => {
         >
           <small className='text-secondary'>© {copyrightYear} QuickSwap</small>
           <small className='text-secondary'>
-            <a
-              className={styles.footerLink}
-              href='https://docs.google.com/document/d/1Gglh43oxUZHdgrS2L9lZfsI4f6HYNF6MbBDsDPJVFkM/edit'
-              target='_blank'
-              rel='noreferrer'
-            >
+            <Link className='footer-link' to='/tos'>
               {t('termsofuse')}
-            </a>
+            </Link>
           </small>
           {!tabletWindowSize && router.pathname === '/' && (
             <Box className={styles.fakeCommunityContainer}>&nbsp;</Box>

@@ -39,12 +39,14 @@ import useDebouncedChangeHandler from 'utils/useDebouncedChangeHandler';
 import useTransactionDeadline from 'hooks/useTransactionDeadline';
 import { useApproveCallback, ApprovalState } from 'hooks/useApproveCallback';
 import { useRouterContract } from 'hooks/useContract';
+import { useDerivedSwapInfo } from 'state/swap/hooks';
 import { wrappedCurrency } from 'utils/wrappedCurrency';
 import { useTotalSupply } from 'data/TotalSupply';
 import { Close } from '@mui/icons-material';
 import styles from 'styles/components/RemoveLiquidityModal.module.scss';
 import { useTranslation } from 'next-i18next';
 import { V2_ROUTER_ADDRESS } from 'constants/v3/addresses';
+import { SLIPPAGE_AUTO } from 'state/user/reducer';
 
 interface RemoveLiquidityModalProps {
   currency0: Currency;
@@ -86,7 +88,11 @@ const RemoveLiquidityModal: React.FC<RemoveLiquidityModalProps> = ({
   );
   const deadline = useTransactionDeadline();
   const { onUserInput: _onUserInput } = useBurnActionHandlers();
-  const [allowedSlippage] = useUserSlippageTolerance();
+  const { autoSlippage } = useDerivedSwapInfo();
+
+  let [allowedSlippage] = useUserSlippageTolerance();
+  allowedSlippage =
+    allowedSlippage === SLIPPAGE_AUTO ? autoSlippage : allowedSlippage;
 
   const onUserInput = useCallback(
     (field: Field, typedValue: string) => {
@@ -246,37 +252,37 @@ const RemoveLiquidityModal: React.FC<RemoveLiquidityModalProps> = ({
     // we have approval, use normal remove liquidity
     if (approval === ApprovalState.APPROVED) {
       // removeLiquidityETH
-      if (oneCurrencyIsETH) {
-        methodNames = [
-          'removeLiquidityETH',
-          'removeLiquidityETHSupportingFeeOnTransferTokens',
-        ];
-        args = [
-          currencyBIsETH ? tokenA.address : tokenB.address,
-          liquidityAmount.raw.toString(),
-          amountsMin[
-            currencyBIsETH ? Field.CURRENCY_A : Field.CURRENCY_B
-          ].toString(),
-          amountsMin[
-            currencyBIsETH ? Field.CURRENCY_B : Field.CURRENCY_A
-          ].toString(),
-          account,
-          deadline.toHexString(),
-        ];
-      }
+      // if (oneCurrencyIsETH) {
+      //   methodNames = [
+      //     'removeLiquidityETH',
+      //     'removeLiquidityETHSupportingFeeOnTransferTokens',
+      //   ];
+      //   args = [
+      //     currencyBIsETH ? tokenA.address : tokenB.address,
+      //     liquidityAmount.raw.toString(),
+      //     amountsMin[
+      //       currencyBIsETH ? Field.CURRENCY_A : Field.CURRENCY_B
+      //     ].toString(),
+      //     amountsMin[
+      //       currencyBIsETH ? Field.CURRENCY_B : Field.CURRENCY_A
+      //     ].toString(),
+      //     account,
+      //     deadline.toHexString(),
+      //   ];
+      // }
       // removeLiquidity
-      else {
-        methodNames = ['removeLiquidity'];
-        args = [
-          tokenA.address,
-          tokenB.address,
-          liquidityAmount.raw.toString(),
-          amountsMin[Field.CURRENCY_A].toString(),
-          amountsMin[Field.CURRENCY_B].toString(),
-          account,
-          deadline.toHexString(),
-        ];
-      }
+      // else {
+      methodNames = ['removeLiquidity'];
+      args = [
+        tokenA.address,
+        tokenB.address,
+        liquidityAmount.raw.toString(),
+        amountsMin[Field.CURRENCY_A].toString(),
+        amountsMin[Field.CURRENCY_B].toString(),
+        account,
+        deadline.toHexString(),
+      ];
+      // }
     } else {
       setRemoveErrorMessage(t('confirmWithoutApproval') ?? '');
       throw new Error(t('confirmWithoutApproval') ?? undefined);

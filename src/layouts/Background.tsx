@@ -3,6 +3,7 @@ import { Box } from '@mui/material';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 
+
 const Background: React.FC<{ fallback: boolean | undefined }> = ({
   fallback = false,
 }) => {

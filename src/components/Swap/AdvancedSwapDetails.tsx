@@ -17,6 +17,8 @@ import {
 import EditIcon from 'svgs/EditIcon.svg';
 import { formatTokenAmount } from 'utils';
 import styles from 'styles/components/Swap.module.scss';
+import { useDerivedSwapInfo } from 'state/swap/hooks';
+import { SLIPPAGE_AUTO } from 'state/user/reducer';
 
 interface TradeSummaryProps {
   trade: Trade;
@@ -50,7 +52,7 @@ export const TradeSummary: React.FC<TradeSummaryProps> = ({
       )}
       <Box className={styles.summaryRow}>
         <Box>
-          <small>{t('slippage')}:</small>
+          <small>{t('maxSlippage')}:</small>
           <QuestionHelper text={t('slippageHelper')} />
         </Box>
         <Box
@@ -122,11 +124,17 @@ export const AdvancedSwapDetails: React.FC<AdvancedSwapDetailsProps> = ({
   trade,
 }) => {
   const [allowedSlippage] = useUserSlippageTolerance();
+  const { autoSlippage } = useDerivedSwapInfo();
 
   return (
     <>
       {trade && (
-        <TradeSummary trade={trade} allowedSlippage={allowedSlippage} />
+        <TradeSummary
+          trade={trade}
+          allowedSlippage={
+            allowedSlippage === SLIPPAGE_AUTO ? autoSlippage : allowedSlippage
+          }
+        />
       )}
     </>
   );

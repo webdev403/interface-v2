@@ -1,9 +1,10 @@
 import React, { useMemo } from 'react';
-import { Box, Button, CircularProgress } from '@mui/material';
-import { useV3Positions, useUniV3Positions } from 'hooks/v3/useV3Positions';
+import { Box, Button } from '@material-ui/core';
+import { useV3Positions } from 'hooks/v3/useV3Positions';
 import { useActiveWeb3React } from 'hooks';
-import usePrevious, { usePreviousNonEmptyArray } from 'hooks/usePrevious';
-import PositionList from './PositionList';
+import Loader from 'components/Loader';
+import usePrevious from 'hooks/usePrevious';
+import PositionList from './components/PositionList';
 import { PositionPool } from 'models/interfaces';
 import { useWalletModalToggle } from 'state/application/hooks';
 import { useTranslation } from 'next-i18next';
@@ -14,16 +15,11 @@ const MyQuickswapPoolsV3: React.FC<{
 }> = ({ hideFarmingPositions, userHideClosedPositions }) => {
   const { t } = useTranslation();
   const { account } = useActiveWeb3React();
-  const {
-    positions: algebraPositions,
-    loading: algebraPositionsLoading,
-  } = useV3Positions(account);
-  const {
-    positions: uniV3Positions,
-    loading: uniV3PositionsLoading,
-  } = useUniV3Positions(account);
-  const positionsLoading = algebraPositionsLoading || uniV3PositionsLoading;
-  const positions = (algebraPositions ?? []).concat(uniV3Positions ?? []);
+  const { positions, loading: positionsLoading } = useV3Positions(
+    account,
+    userHideClosedPositions,
+    hideFarmingPositions,
+  );
 
   const prevAccount = usePrevious(account);
 
@@ -61,19 +57,9 @@ const MyQuickswapPoolsV3: React.FC<{
     ],
   );
 
-  const prevFilteredPositions = usePreviousNonEmptyArray(filteredPositions);
-  const _filteredPositions = useMemo(() => {
-    if (account !== prevAccount) return filteredPositions;
-
-    if (filteredPositions.length === 0 && prevFilteredPositions) {
-      return prevFilteredPositions;
-    }
-    return filteredPositions;
-  }, [prevFilteredPositions, filteredPositions, account, prevAccount]);
-
   const newestPosition = useMemo(() => {
-    return Math.max(..._filteredPositions.map((position) => +position.tokenId));
-  }, [_filteredPositions]);
+    return Math.max(...filteredPositions.map((position) => +position.tokenId));
+  }, [filteredPositions]);
 
   const showConnectAWallet = Boolean(!account);
 
@@ -84,11 +70,11 @@ const MyQuickswapPoolsV3: React.FC<{
       <Box mt={2}>
         {positionsLoading ? (
           <Box className='flex justify-center'>
-            <CircularProgress size={'2rem'} />
+            <Loader size={'2rem'} />
           </Box>
-        ) : _filteredPositions && _filteredPositions.length > 0 ? (
+        ) : filteredPositions && filteredPositions.length > 0 ? (
           <PositionList
-            positions={_filteredPositions.sort((posA, posB) =>
+            positions={filteredPositions.sort((posA, posB) =>
               Number(+posA.tokenId < +posB.tokenId),
             )}
             newestPosition={newestPosition}

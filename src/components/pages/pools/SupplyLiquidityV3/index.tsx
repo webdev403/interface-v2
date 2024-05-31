@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useCurrency } from 'hooks/v3/Tokens';
-import { useActiveWeb3React } from 'hooks';
-import { useRouter } from 'next/router';
+import { useActiveWeb3React, useConnectWallet } from 'hooks';
 import {
+  useActivePreset,
   useV3DerivedMintInfo,
   useV3MintActionHandlers,
   useV3MintState,
@@ -25,11 +25,7 @@ import {
   PriceFormatToggler,
 } from 'components/v3/PriceFomatToggler';
 import { AddLiquidityButton } from './containers/AddLiquidityButton';
-import {
-  useNetworkSelectionModalToggle,
-  useWalletModalToggle,
-} from 'state/application/hooks';
-import { useIsSupportedNetwork } from 'utils';
+import { getGammaPairsForTokens, useIsSupportedNetwork } from 'utils';
 import { useIsExpertMode } from 'state/user/hooks';
 import { currencyId } from 'utils/v3/currencyId';
 import { Box, Button } from '@mui/material';
@@ -42,6 +38,7 @@ import { CHAIN_INFO } from 'constants/v3/chains';
 import { ChainId } from '@uniswap/sdk';
 import { GlobalConst } from 'constants/index';
 import SelectFeeTier from './containers/SelectFeeTier';
+import { useRouter } from 'next/router';
 
 export function SupplyLiquidityV3() {
   const { t } = useTranslation();
@@ -70,8 +67,7 @@ export function SupplyLiquidityV3() {
   const [currencyIdA, setCurrencyIdA] = useState(currencyIdAParam);
   const [currencyIdB, setCurrencyIdB] = useState(currencyIdBParam);
 
-  const toggleWalletModal = useWalletModalToggle(); // toggle wallet when disconnected
-  const toggletNetworkSelectionModal = useNetworkSelectionModalToggle();
+  const { connectWallet } = useConnectWallet(isSupportedNetwork);
 
   const dispatch = useAppDispatch();
 
@@ -252,6 +248,19 @@ export function SupplyLiquidityV3() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hidePriceFormatter]);
 
+  const preset = useActivePreset();
+  const gammaPairData = getGammaPairsForTokens(
+    chainId,
+    baseCurrency?.wrapped.address,
+    currencyB?.wrapped.address,
+    mintInfo.feeAmount,
+  );
+  const gammaPairs = gammaPairData?.pairs;
+  const gammaPair =
+    gammaPairs && gammaPairs.length > 0
+      ? gammaPairs.find((pair) => pair.type === preset)
+      : undefined;
+
   return (
     <Box>
       {openSettingsModal && (
@@ -306,14 +315,8 @@ export function SupplyLiquidityV3() {
           />
         ) : (
           <Button
-            className={styles.supplyLiquidityButton}
-            onClick={() => {
-              if (account) {
-                toggletNetworkSelectionModal();
-              } else {
-                toggleWalletModal();
-              }
-            }}
+            className='v3-supply-liquidity-button'
+            onClick={connectWallet}
           >
             {account ? t('switchNetwork') : t('connectWallet')}
           </Button>
@@ -340,30 +343,28 @@ export function SupplyLiquidityV3() {
               />
             </Box>
           )}
-        {(liquidityRangeType ===
-          GlobalConst.v3LiquidityRangeType.MANUAL_RANGE ||
-          liquidityRangeType ===
-            GlobalConst.v3LiquidityRangeType.STEER_RANGE) && (
-          <Box my={2}>
-            <SelectFeeTier mintInfo={mintInfo} />
-          </Box>
-        )}
+        <SelectFeeTier mintInfo={mintInfo} />
         <SelectRange
           currencyA={baseCurrency}
           currencyB={quoteCurrency}
           mintInfo={mintInfo}
           priceFormat={priceFormat}
         />
-        <Box mt={4}>
-          <EnterAmounts
-            currencyA={baseCurrency ?? undefined}
-            currencyB={currencyB ?? undefined}
-            mintInfo={mintInfo}
-            priceFormat={priceFormat}
-          />
-        </Box>
-
-        <Box mt={2}>
+        <Box mt={4} position='relative'>
+          <small className='weight-600'>{t('depositAmounts')}</small>
+          {gammaPair?.withdrawOnly && (
+            <Box className='v3-deposit-disable-banner'>
+              <p>{t('withdrawOnlyVault')}</p>
+            </Box>
+          )}
+          <Box my={2}>
+            <EnterAmounts
+              currencyA={baseCurrency ?? undefined}
+              currencyB={currencyB ?? undefined}
+              mintInfo={mintInfo}
+              priceFormat={priceFormat}
+            />
+          </Box>
           <AddLiquidityButton
             baseCurrency={baseCurrency ?? undefined}
             quoteCurrency={quoteCurrency ?? undefined}

@@ -56,10 +56,11 @@ const BondItem: React.FC<BondItemProps> = ({ bond }) => {
     bond?.earnToken?.symbol
   } ($${formatNumber(dollarAvailable)})`;
 
-  const disabled =
-    bond.maxTotalPayOut && bond.totalPayoutGiven && bond.earnTokenPrice
-      ? available <= thresholdToHide || Number(bond.discount) === 100
-      : false;
+  const disabled = bond.soldOut
+    ? true
+    : bond.maxTotalPayOut && bond.totalPayoutGiven && bond.earnTokenPrice
+    ? available <= thresholdToHide || Number(bond.discount) === 100
+    : false;
 
   return (
     <Box mb={2} className={styles.bondItemWrapper}>

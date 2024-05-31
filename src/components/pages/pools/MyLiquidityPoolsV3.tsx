@@ -8,7 +8,7 @@ import { GlobalConst } from 'constants/index';
 import CustomTabSwitch from 'components/v3/CustomTabSwitch';
 import {
   useGammaPositionsCount,
-  useV3PositionsCount,
+  useV3Positions,
   useDefiedgePositions,
   useV3SteerPositionsCount,
   useICHIPositionsCount,
@@ -56,10 +56,7 @@ export default function MyLiquidityPoolsV3() {
     },
   ];
 
-  const {
-    loading: quickPoolsLoading,
-    count: quickPoolsCount,
-  } = useV3PositionsCount(
+  const { count: quickPoolsCount } = useV3Positions(
     account,
     userHideQuickClosedPositions,
     hideQuickFarmingPositions,
@@ -87,11 +84,10 @@ export default function MyLiquidityPoolsV3() {
   const { loading: ichiLoading, count: ichiCount } = useICHIPositionsCount();
 
   const loading =
-    quickPoolsLoading ||
-    gammaPoolsLoading ||
-    uniPilotPositionsLoading ||
-    steerPoolsLoading ||
-    ichiLoading ||
+    gammaPoolsLoading &&
+    uniPilotPositionsLoading &&
+    steerPoolsLoading &&
+    ichiLoading &&
     defiedgeStrategiesLoading;
 
   const [poolFilter, setPoolFilter] = useState(
@@ -123,7 +119,7 @@ export default function MyLiquidityPoolsV3() {
         id: GlobalConst.utils.poolsFilter.unipilot,
         text: (
           <Box className='flex items-center'>
-            <small>Unipilot</small>
+            <small>A51 Finance</small>
             <Box
               ml='6px'
               className={`${styles.myV3PoolCountWrapper} ${

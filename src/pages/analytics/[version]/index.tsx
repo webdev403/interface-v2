@@ -22,6 +22,7 @@ import {
 import { ChainId } from '@uniswap/sdk';
 import AnalyticsExtraInfo from 'components/pages/analytics/AnalyticsExtraInfo';
 import AnalyticsHeader from 'components/pages/analytics/AnalyticsHeader';
+import { LiquidityHubAnalytics } from 'components';
 
 dayjs.extend(utc);
 
@@ -48,7 +49,13 @@ const AnalyticsPage = (
     chainId,
   );
 
-  return (
+  const isLiquidityHub = version === 'liquidityhub';
+
+  return isLiquidityHub ? (
+    <Box width='100%' mb={3}>
+      <LiquidityHubAnalytics />
+    </Box>
+  ) : (
     <Box width='100%' mb={3}>
       <AnalyticsHeader />
       {(chainId === ChainId.DOGECHAIN || chainId === ChainId.MATIC) && (

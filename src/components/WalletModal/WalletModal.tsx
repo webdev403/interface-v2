@@ -23,7 +23,7 @@ import {
   metamaskConnection,
   trustWalletConnection,
   cypherDConnection,
-  phantomConnection,
+  // phantomConnection,
 } from 'connectors';
 import {
   getIsBitgetWallet,
@@ -36,6 +36,7 @@ import { useGetConnection, useMasaAnalytics } from 'hooks';
 import { UAuthConnector } from '@uauth/web3-react';
 import UAuth from '@uauth/js';
 import { useArcxAnalytics } from '@arcxmoney/analytics';
+import { config, passport } from '@imtbl/sdk';
 
 const WALLET_VIEWS = {
   OPTIONS: 'options',
@@ -71,7 +72,7 @@ const WalletModal: React.FC<WalletModalProps> = ({
   const walletModalOpen = useModalOpen(ApplicationModal.WALLET);
   const toggleWalletModal = useWalletModalToggle();
 
-  const connections = getConnections();
+  const connections = getConnections(chainId);
 
   const iconify = true;
 
@@ -104,6 +105,23 @@ const WalletModal: React.FC<WalletModalProps> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, arcxSdk]);
+
+  useEffect(() => {
+    if (process.env.REACT_APP_PASSPORT_CLIENT_ID) {
+      const connector = new passport.Passport({
+        baseConfig: {
+          environment: config.Environment.PRODUCTION,
+          publishableKey: process.env.REACT_APP_PASSPORT_PUBLISHABLE_KEY,
+        },
+        clientId: process.env.REACT_APP_PASSPORT_CLIENT_ID,
+        redirectUri: 'https://quickswap.exchange',
+        logoutRedirectUri: 'https://quickswap.exchange',
+        audience: 'platform_api',
+        scope: 'openid offline_access transact',
+      });
+      connector.loginCallback();
+    }
+  }, []);
 
   const tryActivation = async (connection: Connection) => {
     // log selected wallet
@@ -172,31 +190,32 @@ const WalletModal: React.FC<WalletModalProps> = ({
     const isCypherD = ethereum && ethereum.isCypherD;
     const isBitget = getIsBitgetWallet();
     const isTrustWallet = getIsTrustWallet();
-    const isBraveWallet = ethereum && ethereum.isBraveWallet;
-    const isPhantomWallet =
-      (ethereum && ethereum.isPhantom) || (phantom && phantom.ethereum);
+    // const isBraveWallet = ethereum && ethereum.isBraveWallet;
+    // const isPhantomWallet =
+    //   (ethereum && ethereum.isPhantom) || (phantom && phantom.ethereum);
     const isCoinbaseWallet = ethereum && ethereum.isCoinbaseWallet;
     const isOkxwallet = (window as any).okxwallet;
     const isDefiConnectProvider = (window as any).deficonnectProvider;
 
     return connections.map((option) => {
+      // if (
+      //   option.name === GlobalConst.walletName.PHANTOM_WALLET &&
+      //   !isPhantomWallet
+      // ) {
+      //   return (
+      //     <WalletOption
+      //       id={`connect-${option.key}`}
+      //       key={option.key}
+      //       color={option.color}
+      //       header={t('installPhantom')}
+      //       subheader={null}
+      //       link={'https://phantom.app/download'}
+      //       icon={option.iconName}
+      //       iconify={iconify}
+      //     />
+      //   );
+      // } else
       if (
-        option.name === GlobalConst.walletName.PHANTOM_WALLET &&
-        !isPhantomWallet
-      ) {
-        return (
-          <WalletOption
-            id={`connect-${option.key}`}
-            key={option.key}
-            color={option.color}
-            header={t('installPhantom')}
-            subheader={null}
-            link={'https://phantom.app/download'}
-            icon={option.iconName}
-            iconify={iconify}
-          />
-        );
-      } else if (
         option.name === GlobalConst.walletName.BLOCKWALLET &&
         !isBlockWallet
       ) {
@@ -214,22 +233,22 @@ const WalletModal: React.FC<WalletModalProps> = ({
             iconify={iconify}
           />
         );
-      } else if (
-        option.name === GlobalConst.walletName.BRAVEWALLET &&
-        !isBraveWallet
-      ) {
-        return (
-          <WalletOption
-            id={`connect-${option.name}`}
-            key={option.name}
-            color={'#E8831D'}
-            header={t('installBrave')}
-            subheader={t('installBraveDesc')}
-            link={'https://brave.com/wallet'}
-            icon={option.iconName}
-            iconify={iconify}
-          />
-        );
+        // } else if (
+        //   option.name === GlobalConst.walletName.BRAVEWALLET &&
+        //   !isBraveWallet
+        // ) {
+        //   return (
+        //     <WalletOption
+        //       id={`connect-${option.name}`}
+        //       key={option.name}
+        //       color={'#E8831D'}
+        //       header={t('installBrave')}
+        //       subheader={t('installBraveDesc')}
+        //       link={'https://brave.com/wallet'}
+        //       icon={option.iconName}
+        //       iconify={iconify}
+        //     />
+        //   );
       } else if (option.name === GlobalConst.walletName.BITGET && !isBitget) {
         return (
           <WalletOption
@@ -338,8 +357,8 @@ const WalletModal: React.FC<WalletModalProps> = ({
           (option.mobile ||
             (isCypherD && option.connector === cypherDConnection.connector) ||
             (isMetamask && option.connector === metamaskConnection.connector) ||
-            (isPhantomWallet &&
-              option.connector === phantomConnection.connector) ||
+            // (isPhantomWallet &&
+            //   option.connector === phantomConnection.connector) ||
             (isTrustWallet &&
               option.connector === trustWalletConnection.connector) ||
             (isCoinbaseWallet &&

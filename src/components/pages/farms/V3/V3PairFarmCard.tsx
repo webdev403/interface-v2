@@ -12,6 +12,7 @@ import { FarmModal } from 'components/StakeModal';
 import { FarmingType } from 'models/enums';
 import styles from 'styles/pages/Farm.module.scss';
 import Image from 'next/image';
+import Loader from '@orbs-network/twap-ui/dist/components/base/Loader';
 
 interface Props {
   farm: V3Farm;
@@ -72,6 +73,11 @@ export const V3PairFarmCard: React.FC<Props> = ({ farm }) => {
               <small>
                 {farm.token0?.symbol}/{farm.token1?.symbol}
               </small>
+              {!!farm.fee && (
+                <Box className='farmAPRTitleWrapper bg-textSecondary'>
+                  <span className='text-gray32'>{farm.fee / 10000}%</span>
+                </Box>
+              )}
               {farm.title && (
                 <Box
                   className={`${styles.farmAPRTitleWrapper} ${
@@ -97,7 +103,13 @@ export const V3PairFarmCard: React.FC<Props> = ({ farm }) => {
           <>
             <Box width='20%'>
               <p className='small text-secondary'>{t('tvl')}</p>
-              <p className='small'>${formatNumber(farm.tvl)}</p>
+              {farm.loading ? (
+                <Box mt='4px'>
+                  <Loader />
+                </Box>
+              ) : (
+                <p className='small'>${formatNumber(farm.tvl)}</p>
+              )}
             </Box>
             <Box width='20%'>
               <p className='small text-secondary'>{t('totalAPR')}</p>

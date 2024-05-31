@@ -8,7 +8,7 @@ import {
   DoubleCurrencyLogo,
 } from 'components';
 import {
-  useNetworkSelectionModalToggle,
+  useOpenNetworkSelection,
   useWalletModalToggle,
 } from 'state/application/hooks';
 import { TransactionResponse } from '@ethersproject/providers';
@@ -22,7 +22,7 @@ import {
   TokenAmount,
   ChainId,
 } from '@uniswap/sdk';
-import { useActiveWeb3React } from 'hooks';
+import { useActiveWeb3React, useConnectWallet } from 'hooks';
 import { useRouterContract } from 'hooks/useContract';
 import useTransactionDeadline from 'hooks/useTransactionDeadline';
 import { ApprovalState, useApproveCallback } from 'hooks/useApproveCallback';
@@ -54,6 +54,8 @@ import { useRouter } from 'next/router';
 import { V2_ROUTER_ADDRESS } from 'constants/v3/addresses';
 import usePoolsRedirect from 'hooks/usePoolsRedirect';
 import styles from 'styles/components/Swap.module.scss';
+import { useDerivedSwapInfo } from 'state/swap/hooks';
+import { SLIPPAGE_AUTO } from 'state/user/reducer';
 
 const AddLiquidity: React.FC<{
   currencyBgClass?: string;
@@ -67,11 +69,14 @@ const AddLiquidity: React.FC<{
   const { account, chainId, library } = useActiveWeb3React();
   const chainIdToUse = chainId ? chainId : ChainId.MATIC;
   const nativeCurrency = Token.ETHER[chainIdToUse];
+  const { autoSlippage } = useDerivedSwapInfo();
 
   const [showConfirm, setShowConfirm] = useState(false);
   const [attemptingTxn, setAttemptingTxn] = useState(false);
   const [txPending, setTxPending] = useState(false);
-  const [allowedSlippage] = useUserSlippageTolerance();
+  let [allowedSlippage] = useUserSlippageTolerance();
+  allowedSlippage =
+    allowedSlippage === SLIPPAGE_AUTO ? autoSlippage : allowedSlippage;
   const deadline = useTransactionDeadline();
   const [txHash, setTxHash] = useState('');
   const addTransaction = useTransactionAdder();
@@ -162,7 +167,7 @@ const AddLiquidity: React.FC<{
   };
 
   const toggleWalletModal = useWalletModalToggle();
-  const toggleNetworkSelectionModal = useNetworkSelectionModalToggle();
+  const { setOpenNetworkSelection } = useOpenNetworkSelection();
   const [approvingA, setApprovingA] = useState(false);
   const [approvingB, setApprovingB] = useState(false);
   const [approvalA, approveACallback] = useApproveCallback(
@@ -375,13 +380,7 @@ const AddLiquidity: React.FC<{
       });
   };
 
-  const connectWallet = () => {
-    if (!isSupportedNetwork) {
-      toggleNetworkSelectionModal();
-    } else {
-      toggleWalletModal();
-    }
-  };
+  const { connectWallet } = useConnectWallet(isSupportedNetwork);
 
   const handleDismissConfirmation = useCallback(() => {
     setShowConfirm(false);

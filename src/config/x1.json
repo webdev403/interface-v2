@@ -3,10 +3,11 @@
   "v2": false,
   "rpc": "https://testrpc.x1.tech",
   "blockExplorer": "https://www.oklink.com/x1-test",
-  "networkName": "X1 Testnet",
+  "networkName": "X Layer testnet",
   "aprAPINetwork": "x1",
   "chainId": 195,
-  "isMainnet": true,
+  "isMainnet": false,
+  "visible": true,
   "nativeCurrencyImage": "/OKB.png",
   "nativeCurrency": {
     "name": "OKB",
@@ -42,6 +43,7 @@
     "available": false
   },
   "analytics": {
+    "liquidityHub": false,
     "available": false
   },
   "lending": {

@@ -11,6 +11,7 @@ import {
 } from './actions';
 import { Call, parseCallKey, toCallKey } from './utils';
 import { useBlockNumber } from 'state/application/hooks';
+import { getConfig } from '../../../config/index';
 
 export interface Result extends ReadonlyArray<any> {
   readonly [key: string]: any;
@@ -63,6 +64,11 @@ function useCallsData(
   _?: string,
 ): CallResult[] {
   const { chainId } = useActiveWeb3React();
+  const config = getConfig(chainId);
+  const localBlocksPerFetch = config['blocksPerFetch'] ?? 20;
+  if (blocksPerFetch && blocksPerFetch === 1) {
+    blocksPerFetch = localBlocksPerFetch;
+  }
   const callResults = useAppSelector((state) => state.multicallV3.callResults);
   const dispatch = useAppDispatch();
 

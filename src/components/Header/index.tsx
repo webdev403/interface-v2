@@ -1,24 +1,23 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { Box, Button, useMediaQuery, useTheme } from '@mui/material';
-import { KeyboardArrowDown, MoreHoriz, Close } from '@mui/icons-material';
-import {
-  useNetworkSelectionModalToggle,
-  useUDDomain,
-  useWalletModalToggle,
-} from 'state/application/hooks';
+import { Link } from 'react-router-dom';
+import { Box, Button, useMediaQuery } from '@material-ui/core';
+import { KeyboardArrowDown, Close } from '@material-ui/icons';
+import { useTheme } from '@material-ui/core/styles';
+import { useUDDomain, useWalletModalToggle } from 'state/application/hooks';
 import {
   isTransactionRecent,
   useAllTransactions,
 } from 'state/transactions/hooks';
 import { TransactionDetails } from 'state/transactions/reducer';
-import { shortenAddress, useIsSupportedNetwork } from 'utils';
-import useENSName from 'hooks/useENSName';
-import { WalletModal, NetworkSelectionModal } from 'components';
+import { shortenAddress } from 'utils';
+//import useENSName from 'hooks/useENSName';
+import { WalletModal } from 'components';
 import { useActiveWeb3React } from 'hooks';
 import styles from 'styles/components/Header.module.scss';
-import { useTranslation } from 'next-i18next';
+import QuickLogoWebP from 'assets/images/quickLogo.webp';
+// import { ReactComponent as LightIcon } from 'assets/images/LightIcon.svg';
+import 'components/styles/Header.scss';
+import { useTranslation } from 'react-i18next';
 import { getConfig } from 'config/index';
 import useDeviceWidth from 'hooks/useDeviceWidth';
 import { USDC, USDT } from 'constants/v3/addresses';
@@ -36,6 +35,9 @@ import Image from 'next/image';
 const QuickIcon = '/assets/images/quickIcon.svg';
 const QuickLogo = '/assets/images/quickLogo.png';
 const WalletIcon = '/assets/images/WalletIcon.png';
+import { NetworkSelection } from './NetworkSelection';
+import { useRouter } from 'next/router';
+import { MoreHoriz } from '@mui/icons-material';
 
 const newTransactionsFirst = (a: TransactionDetails, b: TransactionDetails) => {
   return b.addedTime - a.addedTime;
@@ -47,9 +49,9 @@ const Header: React.FC<{ onUpdateNewsletter: (val: boolean) => void }> = ({
   const { t } = useTranslation();
   const router = useRouter();
   const { account, chainId, connector } = useActiveWeb3React();
-  const isSupportedNetwork = useIsSupportedNetwork();
-  const { ENSName } = useENSName(account ?? undefined);
+  //const { ENSName } = useENSName(account ?? undefined);
   const { udDomain } = useUDDomain();
+  //const [openDetailMenu, setOpenDetailMenu] = useState(false);
   const [showNewsletter, setShowNewsletter] = useState(false);
 
   const theme = useTheme();
@@ -68,7 +70,6 @@ const Header: React.FC<{ onUpdateNewsletter: (val: boolean) => void }> = ({
   const tabletWindowSize = useMediaQuery(theme.breakpoints.down('md'));
   const mobileWindowSize = useMediaQuery(theme.breakpoints.down('sm'));
   const toggleWalletModal = useWalletModalToggle();
-  const toggleNetworkSelectionModal = useNetworkSelectionModalToggle();
   const deviceWidth = useDeviceWidth();
   const [headerClass, setHeaderClass] = useState('');
 
@@ -349,9 +350,10 @@ const Header: React.FC<{ onUpdateNewsletter: (val: boolean) => void }> = ({
       <Box
         className={`${styles.menuBar} ${tabletWindowSize ? '' : headerClass}`}
       >
-        <NetworkSelectionModal />
+        <NetworkSelection />
+      <Box className={`menuBar ${tabletWindowSize ? '' : headerClass}`}>
         <WalletModal
-          ENSName={ENSName ?? undefined}
+          ENSName={undefined}
           pendingTransactions={pending}
           confirmedTransactions={confirmed}
         />
@@ -364,6 +366,17 @@ const Header: React.FC<{ onUpdateNewsletter: (val: boolean) => void }> = ({
               height={mobileWindowSize ? 40 : 60}
             />
           </picture>
+          </Link>
+        <Link to='/'>
+          {mobileWindowSize && (
+            <img src={QuickIcon} alt='QuickLogo' height={40} />
+          )}
+          {!mobileWindowSize && (
+            <picture>
+              <source height={60} srcSet={QuickLogoWebP} type='image/webp' />
+              <img src={QuickLogo} alt='QuickLogo' height={60} />
+            </picture>
+          )}
         </Link>
         {!tabletWindowSize && (
           <Box className={styles.mainMenu}>
@@ -414,6 +427,7 @@ const Header: React.FC<{ onUpdateNewsletter: (val: boolean) => void }> = ({
               <KeyboardArrowDown />
             </Box>
           )}
+          {!parsedChain && <NetworkSelection />}
 
           {account ? (
             <Box
@@ -434,6 +448,7 @@ const Header: React.FC<{ onUpdateNewsletter: (val: boolean) => void }> = ({
           )}
         </Box>
       </Box>
+    </Box>
     </Box>
   );
 };

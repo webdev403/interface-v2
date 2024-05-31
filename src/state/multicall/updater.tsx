@@ -10,11 +10,14 @@ import { useBlockNumber } from 'state/application/hooks';
 import { AppDispatch, AppState } from 'state';
 import {
   Call,
+  addListenerOptions,
   errorFetchingMulticallResults,
   fetchingMulticallResults,
   parseCallKey,
   updateMulticallResults,
 } from './actions';
+
+import { getConfig } from '../../config/index';
 
 // chunk calls so we do not exceed the gas limit
 const DEFAULT_GAS_REQUIRED = 1_000_000;
@@ -148,7 +151,7 @@ export default function Updater(): null {
     (state) => state.multicall,
   );
   // wait for listeners to settle before triggering updates
-  const debouncedListeners = useDebounce(state.callListeners, 100);
+  const debouncedListeners = useDebounce(state.callListeners, 1000);
   const latestBlockNumber = useBlockNumber();
   const { chainId } = useActiveWeb3React();
   const multicallContract = useMulticallContract();
@@ -157,6 +160,17 @@ export default function Updater(): null {
     cancellations: (() => void)[];
   }>();
 
+  const config = getConfig(chainId);
+
+  useMemo(() => {
+    const blocksPerFetch = config['blocksPerFetch'] ?? 20;
+    dispatch(
+      addListenerOptions({
+        chainId,
+        blocksPerFetch: blocksPerFetch,
+      }),
+    );
+  }, [chainId]);
   const listeningKeys: { [callKey: string]: number } = useMemo(() => {
     return activeListeningKeys(debouncedListeners, chainId);
   }, [debouncedListeners, chainId]);

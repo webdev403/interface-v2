@@ -11,6 +11,7 @@ import { getAllGammaPairs } from 'utils';
 import { useActiveWeb3React } from 'hooks';
 import { useRouter } from 'next/router';
 import { Home, KeyboardArrowRight } from '@mui/icons-material';
+import { useHistory } from 'react-router-dom';
 import {
   useEternalFarmsFiltered,
   useGammaFarmsFiltered,
@@ -27,6 +28,7 @@ import {
 } from 'hooks/v3/useSteerData';
 import { Token } from '@uniswap/sdk';
 import { V3Farm } from './Farms';
+import { getConfig } from 'config/index';
 
 interface Props {
   searchValue: string;
@@ -49,6 +51,9 @@ const AllV3Farms: React.FC<Props> = ({ searchValue, farmStatus }) => {
   const { chainId } = useActiveWeb3React();
   const isMobile = useMediaQuery(breakpoints.down('sm'));
   const router = useRouter();
+  const history = useHistory();
+  const config = getConfig(chainId);
+  const qsAvailable = config['farm']['quickswap'];
 
   const farmFilters = useMemo(
     () => [
@@ -201,8 +206,7 @@ const AllV3Farms: React.FC<Props> = ({ searchValue, farmStatus }) => {
   );
 
   const loading =
-    eternalFarmsLoading ||
-    loadingQSFarms ||
+    (qsAvailable ? eternalFarmsLoading || loadingQSFarms : false) ||
     loadingGamma ||
     unipilotFarmsLoading ||
     unipilotFarmDataLoading ||

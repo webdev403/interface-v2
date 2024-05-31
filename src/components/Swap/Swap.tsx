@@ -13,10 +13,6 @@ import { event } from 'nextjs-google-analytics';
 import { ArrowDown } from 'react-feather';
 import { Box, Button, CircularProgress } from '@mui/material';
 import {
-  useNetworkSelectionModalToggle,
-  useWalletModalToggle,
-} from 'state/application/hooks';
-import {
   useDefaultsFromURLSearch,
   useDerivedSwapInfo,
   useSwapActionHandlers,
@@ -39,6 +35,7 @@ import {
   useActiveWeb3React,
   useMasaAnalytics,
   useGetConnection,
+  useConnectWallet,
 } from 'hooks';
 import {
   ApprovalState,
@@ -70,6 +67,7 @@ import { wrappedCurrency } from 'utils/wrappedCurrency';
 import { useUSDCPriceFromAddress } from 'utils/useUSDCPrice';
 import { V2_ROUTER_ADDRESS } from 'constants/v3/addresses';
 import { useV2TradeTypeAnalyticsCallback } from './LiquidityHub';
+import { SLIPPAGE_AUTO } from 'state/user/reducer';
 
 const Swap: React.FC<{
   currencyBgClass?: string;
@@ -80,20 +78,20 @@ const Swap: React.FC<{
   const isSupportedNetwork = useIsSupportedNetwork();
 
   // token warning stuff
-  const [loadedInputCurrency, loadedOutputCurrency] = [
-    useCurrency(loadedUrlParams?.inputCurrencyId),
-    useCurrency(loadedUrlParams?.outputCurrencyId),
-  ];
+  // const [loadedInputCurrency, loadedOutputCurrency] = [
+  //   useCurrency(loadedUrlParams?.inputCurrencyId),
+  //   useCurrency(loadedUrlParams?.outputCurrencyId),
+  // ];
   const [dismissTokenWarning, setDismissTokenWarning] = useState<boolean>(
     false,
   );
-  const urlLoadedTokens: Token[] = useMemo(
-    () =>
-      [loadedInputCurrency, loadedOutputCurrency]?.filter(
-        (c): c is Token => c instanceof Token,
-      ) ?? [],
-    [loadedInputCurrency, loadedOutputCurrency],
-  );
+  // const urlLoadedTokens: Token[] = useMemo(
+  //   () =>
+  //     [loadedInputCurrency, loadedOutputCurrency]?.filter(
+  //       (c): c is Token => c instanceof Token,
+  //     ) ?? [],
+  //   [loadedInputCurrency, loadedOutputCurrency],
+  // );
   const handleConfirmTokenWarning = useCallback(() => {
     setDismissTokenWarning(true);
   }, []);
@@ -106,11 +104,11 @@ const Swap: React.FC<{
 
   // dismiss warning if all imported tokens are in active lists
   const defaultTokens = useAllTokens();
-  const importTokensNotInDefault =
-    urlLoadedTokens &&
-    urlLoadedTokens.filter((token: Token) => {
-      return !(token.address in defaultTokens);
-    });
+  // const importTokensNotInDefault =
+  //   urlLoadedTokens &&
+  //   urlLoadedTokens.filter((token: Token) => {
+  //     return !Boolean(token.address in defaultTokens);
+  //   });
 
   const { t } = useTranslation();
   const { account, chainId } = useActiveWeb3React();
@@ -123,6 +121,7 @@ const Swap: React.FC<{
     parsedAmount,
     currencies,
     inputError: swapInputError,
+    autoSlippage,
   } = useDerivedSwapInfo();
   const toggledVersion = useToggledVersion();
   const finalizedTransaction = useTransactionFinalizer();
@@ -137,6 +136,23 @@ const Swap: React.FC<{
     typedValue,
   );
 
+  const [selectedInputCurrency, selectedOutputCurrency] = [
+    useCurrency(wrappedCurrency(currencies[Field.INPUT], chainId)?.address),
+    useCurrency(wrappedCurrency(currencies[Field.OUTPUT], chainId)?.address),
+  ];
+  const selectedTokens: Token[] = useMemo(
+    () =>
+      [selectedInputCurrency, selectedOutputCurrency]?.filter(
+        (c): c is Token => c instanceof Token,
+      ) ?? [],
+    [selectedInputCurrency, selectedOutputCurrency],
+  );
+  const selectedTokensNotInDefault =
+    selectedTokens &&
+    selectedTokens.filter((token: Token) => {
+      return !Boolean(token.address in defaultTokens);
+    });
+
   const showWrap: boolean = wrapType !== WrapType.NOT_APPLICABLE;
   const tradesByVersion = {
     [Version.v1]: v1Trade,
@@ -149,7 +165,9 @@ const Swap: React.FC<{
     onChangeRecipient,
   } = useSwapActionHandlers();
   const { address: recipientAddress } = useENSAddress(recipient);
-  const [allowedSlippage] = useUserSlippageTolerance();
+  let [allowedSlippage] = useUserSlippageTolerance();
+  allowedSlippage =
+    allowedSlippage === SLIPPAGE_AUTO ? autoSlippage : allowedSlippage;
   const [approving, setApproving] = useState(false);
   const [approval, approveCallback] = useApproveCallbackFromTrade(
     trade,
@@ -203,22 +221,15 @@ const Swap: React.FC<{
       (approvalSubmitted && approval === ApprovalState.APPROVED)) &&
     !(priceImpactSeverity > 3 && !isExpertMode);
 
-  const toggleWalletModal = useWalletModalToggle();
-  const toggletNetworkSelectionModal = useNetworkSelectionModalToggle();
-
   useEffect(() => {
     if (approval === ApprovalState.PENDING) {
       setApprovalSubmitted(true);
+    } else if (approval === ApprovalState.APPROVED) {
+      setApprovalSubmitted(false);
     }
   }, [approval, approvalSubmitted]);
 
-  const connectWallet = () => {
-    if (!isSupportedNetwork) {
-      toggletNetworkSelectionModal();
-    } else {
-      toggleWalletModal();
-    }
-  };
+  const { connectWallet } = useConnectWallet(isSupportedNetwork);
   const { redirectWithCurrency, redirectWithSwitch } = useSwapRedirects();
   const parsedCurrency0Id = (router.query.currency0 ??
     router.query.inputCurrency) as string;
@@ -238,10 +249,19 @@ const Swap: React.FC<{
       if (isSwichRedirect) {
         redirectWithSwitch();
       } else {
+        if (!Boolean(inputCurrency.address in defaultTokens)) {
+          setDismissTokenWarning(false);
+        }
         redirectWithCurrency(inputCurrency, true);
       }
     },
-    [parsedCurrency1Id, redirectWithCurrency, redirectWithSwitch, chainIdToUse],
+    [
+      parsedCurrency1Id,
+      redirectWithCurrency,
+      redirectWithSwitch,
+      chainIdToUse,
+      defaultTokens,
+    ],
   );
 
   const parsedCurrency0 = useCurrency(parsedCurrency0Id);
@@ -273,10 +293,19 @@ const Swap: React.FC<{
       if (isSwichRedirect) {
         redirectWithSwitch();
       } else {
+        if (!Boolean(outputCurrency.address in defaultTokens)) {
+          setDismissTokenWarning(false);
+        }
         redirectWithCurrency(outputCurrency, false);
       }
     },
-    [parsedCurrency0Id, redirectWithCurrency, redirectWithSwitch, chainIdToUse],
+    [
+      parsedCurrency0Id,
+      redirectWithCurrency,
+      redirectWithSwitch,
+      chainIdToUse,
+      defaultTokens,
+    ],
   );
 
   const parsedCurrency1 = useCurrency(parsedCurrency1Id);
@@ -645,8 +674,8 @@ const Swap: React.FC<{
   return (
     <Box>
       <TokenWarningModal
-        isOpen={importTokensNotInDefault.length > 0 && !dismissTokenWarning}
-        tokens={importTokensNotInDefault}
+        isOpen={selectedTokensNotInDefault.length > 0 && !dismissTokenWarning}
+        tokens={selectedTokensNotInDefault}
         onConfirm={handleConfirmTokenWarning}
         onDismiss={handleDismissTokenWarning}
       />
@@ -776,7 +805,7 @@ const Swap: React.FC<{
                 }
               }}
             >
-              {approval === ApprovalState.PENDING ? (
+              {approvalSubmitted && approval !== ApprovalState.APPROVED ? (
                 <Box className='content'>
                   {t('approving')} <CircularProgress size={16} />
                 </Box>

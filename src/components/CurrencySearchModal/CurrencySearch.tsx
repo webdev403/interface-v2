@@ -13,8 +13,8 @@ import { Box, Divider } from '@mui/material';
 import { useTranslation } from 'next-i18next';
 import { useDispatch } from 'react-redux';
 import { useActiveWeb3React } from 'hooks';
-import { useAllTokens, useToken } from 'hooks/Tokens';
-import { useSelectedListInfo } from 'state/lists/hooks';
+import { useAllTokens, useToken, useInActiveTokens } from 'hooks/Tokens';
+import { useInactiveTokenList, useSelectedListInfo } from 'state/lists/hooks';
 import { selectList } from 'state/lists/actions';
 import { GlobalConst } from 'constants/index';
 import { Close, Search } from '@mui/icons-material';
@@ -65,6 +65,7 @@ const CurrencySearch: React.FC<CurrencySearchProps> = ({
   );
 
   const allTokens = useAllTokens();
+  const inactiveTokens = useInActiveTokens();
 
   // if they input an address, use it
   const isAddressSearch = isAddress(searchQuery);
@@ -88,8 +89,24 @@ const CurrencySearch: React.FC<CurrencySearchProps> = ({
 
   const filteredTokens: Token[] = useMemo(() => {
     if (isAddressSearch) return searchToken ? [searchToken] : [];
-    return filterTokens(Object.values(allTokens), searchQuery);
-  }, [isAddressSearch, searchToken, allTokens, searchQuery]);
+    const filteredResult = filterTokens(Object.values(allTokens), searchQuery);
+    let filteredInactiveResult: Token[] = [];
+    // search in inactive token list.
+    if (searchQuery) {
+      filteredInactiveResult = filterTokens(
+        Object.values(inactiveTokens),
+        searchQuery,
+      );
+    }
+    const inactiveAddresses = filteredInactiveResult.map(
+      (token) => token.address,
+    );
+    const filteredDefaultTokens = filteredResult.filter(
+      (token) => !inactiveAddresses.includes(token.address),
+    );
+    // return filterTokens(Object.values(allTokens), searchQuery);
+    return [...filteredDefaultTokens, ...filteredInactiveResult];
+  }, [isAddressSearch, searchToken, allTokens, inactiveTokens, searchQuery]);
 
   const filteredSortedTokens: Token[] = useMemo(() => {
     if (searchToken) return [searchToken];

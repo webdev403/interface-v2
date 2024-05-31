@@ -5,11 +5,14 @@ import {
   GlobalConst,
   GlobalData,
   IchiVaults,
+  blackListMerklFarms,
+  merklAMMs,
 } from 'constants/index';
 import { GAMMA_MASTERCHEF_ADDRESSES } from 'constants/v3/addresses';
 import {
   useGammaHypervisorContract,
   useMasterChefContract,
+  useUNIV3NFTPositionManagerContract,
   useV3NFTPositionManagerContract,
 } from 'hooks/useContract';
 import { useEffect, useMemo } from 'react';
@@ -42,6 +45,8 @@ import {
 import { useV3PositionsFromTokenIds } from './useV3Positions';
 import { BigNumber } from 'ethers';
 import { useLastTransactionHash } from 'state/transactions/hooks';
+import { FeeAmount } from 'v3lib/utils';
+import { getConfig } from 'config/index';
 
 export const useEternalFarmsFiltered = (
   farms: any[],
@@ -301,13 +306,17 @@ export const useEternalFarmsFiltered = (
   };
 };
 
-export const useMerklFarms = () => {
+export const useGetMerklFarms = () => {
   const { chainId, account } = useActiveWeb3React();
+  const config = getConfig(chainId);
+  const merklAvailable = config['farm']['merkl'];
   const fetchMerklFarms = async () => {
-    const merklAPIURL = process.env.NEXT_PUBLIC_MERKL_API_URL;
-    if (!merklAPIURL || !chainId) return [];
+    const merklAPIURL = process.env.REACT_APP_MERKL_API_URL;
+    if (!merklAPIURL || !chainId || !merklAvailable) return [];
+    const amms = merklAMMs[chainId] ?? ['quickswapuni'];
+    const ammStr = amms.map((amm) => `amms[]=${amm}&`).join('');
     const res = await fetch(
-      `${merklAPIURL}?chainIds[]=${chainId}&AMMs[]=quickswapalgebra${
+      `${merklAPIURL}?${ammStr}chainIds[]=${chainId}${
         account ? `&user=${account}` : ''
       }`,
     );
@@ -317,18 +326,32 @@ export const useMerklFarms = () => {
         ? data[chainId.toString()]?.pools
         : undefined;
     if (!farmData) return [];
-    return Object.values(farmData) as any[];
+    return Object.values(farmData).filter(
+      (item: any) =>
+        !(blackListMerklFarms[chainId] ?? []).find(
+          (address) =>
+            item?.pool && item.pool.toLowerCase() === address.toLowerCase(),
+        ) && amms.includes(item.ammName.toLowerCase()),
+    ) as any[];
   };
   const lastTx = useLastTransactionHash();
-  const { isLoading: loadingMerkl, data: merklFarms, refetch } = useQuery({
+  const { isLoading, data, refetch } = useQuery({
     queryKey: ['fetchMerklFarms', chainId, account],
     queryFn: fetchMerklFarms,
-    refetchInterval: 300000,
+    refetchInterval: 60000,
   });
   useEffect(() => {
-    refetch();
+    setTimeout(() => {
+      refetch();
+    }, 10000);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lastTx]);
+  return { isLoading, data, refetch };
+};
+
+export const useMerklFarms = () => {
+  const { chainId } = useActiveWeb3React();
+  const { isLoading: loadingMerkl, data: merklFarms } = useGetMerklFarms();
   const { loading: loadingSteer, data: steerVaults } = useSteerVaults(chainId);
   const { isLoading: loadingGamma, data: gammaData } = useGammaData();
   const { loading: loadingICHI, data: ichiVaults } = useICHIVaults();
@@ -428,12 +451,13 @@ export const useMerklFarms = () => {
                 0,
               ),
             almAPR: item?.meanAPR ?? 0,
-            label: 'QuickSwap',
+            label: item?.ammName,
           },
         ])
         .map((alm: any) => {
           let poolAPR = 0;
           let title = '';
+          let allowToken0;
           if (alm.label.includes('Gamma')) {
             const gammaItemData = gammaData
               ? gammaData[alm.almAddress.toLowerCase()]
@@ -453,7 +477,7 @@ export const useMerklFarms = () => {
               minTick,
               maxTick,
             );
-            title = (steerVault?.strategy?.strategyConfigData?.name ?? '')
+            title = (steerVault?.strategyName ?? '')
               .toLowerCase()
               .includes('stable')
               ? 'Stable'
@@ -466,6 +490,11 @@ export const useMerklFarms = () => {
                 (item) =>
                   item.address.toLowerCase() === alm.almAddress.toLowerCase(),
               )?.apr ?? 0;
+            const ichiVault = ichiVaults.find(
+              (item) =>
+                item.address.toLowerCase() === alm.almAddress.toLowerCase(),
+            );
+            allowToken0 = ichiVault?.allowToken0;
           } else if (alm.label.includes('DefiEdge')) {
             poolAPR =
               defiedgeAprs?.find(
@@ -473,13 +502,17 @@ export const useMerklFarms = () => {
                   e.strategy.address.toLowerCase() ===
                   alm.almAddress.toLowerCase(),
               )?.strategy?.fees_apr ?? 0;
-          } else if (alm.label.includes('QuickSwap') && eternalFarmPoolAprs) {
+          } else if (
+            alm.label.toLowerCase().includes('quickswap') &&
+            eternalFarmPoolAprs
+          ) {
             poolAPR = eternalFarmPoolAprs[alm.almAddress.toLowerCase()] ?? 0;
           }
           return {
             ...alm,
             poolAPR,
             title,
+            allowToken0,
             almAPR: alm?.almAPR ?? 0,
             almTVL: alm?.almTVL ?? 0,
           };
@@ -492,19 +525,20 @@ export const useMerklFarms = () => {
     eternalFarmPoolAprs,
     gammaData,
     ichiAPRs,
+    ichiVaults,
     merklFarms,
     steerVaults,
   ]);
   return {
-    loading:
-      loadingMerkl ||
-      loadingGamma ||
-      loadingSteer ||
-      loadingICHI ||
+    loading: loadingMerkl,
+    loadingPoolAPRs:
+      loadingDefiEdgeAPRs ||
       loadingICHIAPRs ||
       loadingUSDPrices ||
-      loadingDefiEdgeAPRs ||
-      eternalFarmPoolAprsLoading,
+      eternalFarmPoolAprsLoading ||
+      loadingSteer ||
+      loadingGamma ||
+      loadingICHI,
     farms,
   };
 };
@@ -859,14 +893,21 @@ export const useGammaFarmsFiltered = (
       return 1;
     });
   return {
-    loading: gammaRewardsLoading || gammaFarmsLoading,
+    loading:
+      gammaPairs.length > 0 ? gammaRewardsLoading || gammaFarmsLoading : false,
     data: filteredFarms,
   };
 };
 
-export function useV3PositionsFromPool(token0?: string, token1?: string) {
+export function useV3PositionsFromPool(
+  token0?: string,
+  token1?: string,
+  fee?: FeeAmount,
+) {
   const { account } = useActiveWeb3React();
-  const positionManager = useV3NFTPositionManagerContract();
+  const algebraPositionManager = useV3NFTPositionManagerContract();
+  const uniPositionManager = useUNIV3NFTPositionManagerContract();
+  const positionManager = fee ? uniPositionManager : algebraPositionManager;
 
   const {
     loading: balanceLoading,
@@ -909,6 +950,7 @@ export function useV3PositionsFromPool(token0?: string, token1?: string) {
 
   const { positions, loading: positionsLoading } = useV3PositionsFromTokenIds(
     tokenIds,
+    !!fee,
   );
 
   const filteredPositions = useMemo(() => {
@@ -918,9 +960,10 @@ export function useV3PositionsFromPool(token0?: string, token1?: string) {
       (item) =>
         item.token0.toLowerCase() === token0.toLowerCase() &&
         item.token1.toLowerCase() === token1.toLowerCase() &&
+        (fee ? Number(item.fee) === fee : true) &&
         item.liquidity.gt('0'),
     );
-  }, [positions, token0, token1]);
+  }, [fee, positions, token0, token1]);
 
   return {
     loading: someTokenIdsLoading || balanceLoading || positionsLoading,

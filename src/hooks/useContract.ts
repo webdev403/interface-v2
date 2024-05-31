@@ -15,6 +15,7 @@ import V2ToV3MigratorABI from 'constants/abis/v3/migrator.json';
 import { STAKING_DUAL_REWARDS_INTERFACE } from 'constants/abis/staking-rewards';
 import UNISOCKS_ABI from 'constants/abis/unisocks.json';
 import WETH_ABI from 'constants/abis/weth.json';
+import NATIVE_CONVERTER_ABI from 'constants/abis/nativeConverter.json';
 import { MULTICALL_ABI } from 'constants/multicall';
 import {
   V1_EXCHANGE_ABI,
@@ -46,12 +47,12 @@ import {
   STEER_VAULT_REGISTRY,
   PRICE_GETTER_ADDRESS,
   MERKL_DISTRIBUTOR,
+  NATIVE_CONVERTER,
 } from 'constants/v3/addresses';
 import NewQuoterABI from 'constants/abis/v3/quoter.json';
 import UniV3QuoterABI from 'constants/abis/uni-v3/quoter.json';
 import MULTICALL2_ABI from 'constants/abis/v3/multicall.json';
 import NFTPosMan from 'constants/abis/v3/nft-pos-man.json';
-import GammaUniProxy from 'constants/abis/gamma-uniproxy.json';
 import GammaUniProxy1 from 'constants/abis/gamma-uniproxy1.json';
 import GammaMasterChef from 'constants/abis/gamma-masterchef.json';
 import GammaPairABI from 'constants/abis/gamma-hypervisor.json';
@@ -210,6 +211,17 @@ export function useWETHContract(
   );
 }
 
+export function useNativeConverterContract(
+  withSignerIfPossible?: boolean,
+): Contract | null {
+  const { chainId } = useActiveWeb3React();
+  return useContract(
+    chainId ? NATIVE_CONVERTER[chainId] : undefined,
+    NATIVE_CONVERTER_ABI,
+    withSignerIfPossible,
+  );
+}
+
 export function useArgentWalletDetectorContract(): Contract | null {
   const { chainId } = useActiveWeb3React();
   return useContract(
@@ -352,15 +364,7 @@ export function useGammaUNIProxyContract(
     uniProxyResult.result.length > 0
       ? uniProxyResult.result[0]
       : undefined;
-  return useContract(
-    uniProxyAddress,
-    uniProxyAddress &&
-      uniProxyAddress.toLowerCase() ===
-        '0xa42d55074869491d60ac05490376b74cf19b00e6'
-      ? GammaUniProxy1
-      : GammaUniProxy,
-    withSignerIfPossible,
-  );
+  return useContract(uniProxyAddress, GammaUniProxy1, withSignerIfPossible);
 }
 
 export function useMasterChefContract(

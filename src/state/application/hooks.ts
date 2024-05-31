@@ -8,7 +8,6 @@ import {
   PopupContent,
   removePopup,
   setOpenModal,
-  updateEthPrice,
   addBookMarkToken,
   removeBookmarkToken,
   updateBookmarkTokens,
@@ -18,8 +17,9 @@ import {
   updateMaticPrice,
   updateIsV2,
   updateUDDomain,
+  updateOpenNetworkSelection,
 } from './actions';
-import { ETHPrice, MaticPrice, TokenDetail } from './reducer';
+import {  MaticPrice, TokenDetail } from './reducer';
 
 export function useBlockNumber(): number | undefined {
   const { chainId } = useActiveWeb3React();
@@ -58,10 +58,6 @@ export function useCloseModals(): () => void {
 
 export function useWalletModalToggle(): () => void {
   return useToggleModal(ApplicationModal.WALLET);
-}
-
-export function useNetworkSelectionModalToggle(): () => void {
-  return useToggleModal(ApplicationModal.NETWORK_SELECTION);
 }
 
 export function useToggleSettingsMenu(): () => void {
@@ -115,28 +111,6 @@ export function useRemovePopup(): (key: string) => void {
 export function useActivePopups(): AppState['application']['popupList'] {
   const list = useSelector((state: AppState) => state.application.popupList);
   return useMemo(() => list.filter((item) => item.show), [list]);
-}
-
-export function useEthPrice(): {
-  ethPrice: ETHPrice;
-  updateEthPrice: ({ price, oneDayPrice, ethPriceChange }: ETHPrice) => void;
-} {
-  const ethPrice = useSelector((state: AppState) => state.application.ethPrice);
-
-  const dispatch = useDispatch();
-  const _updateETHPrice = useCallback(
-    ({ price, oneDayPrice, ethPriceChange }: ETHPrice) => {
-      dispatch(
-        updateEthPrice({
-          price: price ?? 0,
-          oneDayPrice: oneDayPrice ?? 0,
-          ethPriceChange: ethPriceChange ?? 0,
-        }),
-      );
-    },
-    [dispatch],
-  );
-  return { ethPrice, updateEthPrice: _updateETHPrice };
 }
 
 export function useMaticPrice(): {
@@ -289,4 +263,24 @@ export function useUDDomain(): {
 export function useSoulZap() {
   const soulZap = useSelector((state: AppState) => state.application.soulZap);
   return soulZap;
+}
+
+export function useOpenNetworkSelection(): {
+  openNetworkSelection: boolean;
+  setOpenNetworkSelection: (isOpen: boolean) => void;
+} {
+  const openNetworkSelection = useSelector(
+    (state: AppState) => state.application.openNetworkSelection,
+  );
+  const dispatch = useDispatch();
+  const _setOpenNetworkSelection = useCallback(
+    (isOpen: boolean) => {
+      dispatch(updateOpenNetworkSelection(isOpen));
+    },
+    [dispatch],
+  );
+  return {
+    openNetworkSelection,
+    setOpenNetworkSelection: _setOpenNetworkSelection,
+  };
 }

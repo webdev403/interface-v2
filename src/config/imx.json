@@ -7,6 +7,7 @@
   "aprAPINetwork": "imx",
   "chainId": 13371,
   "isMainnet": true,
+  "visible": true,
   "nativeCurrencyImage": "/tIMX_zkevm.jpg",
   "nativeCurrency": {
     "name": "IMX",
@@ -26,8 +27,8 @@
   },
   "farm": {
     "quickswap": false,
-    "merkl": false,
-    "available": false
+    "merkl": true,
+    "available": true
   },
   "lair": {
     "available": false,
@@ -66,7 +67,7 @@
     "available": false
   },
   "gamma": {
-    "available": false
+    "available": true
   },
   "unipilot": {
     "available": false
@@ -85,5 +86,7 @@
   },
   "ichi": {
     "available": false
-  }
+  },
+  "maxChunks": 50,
+  "blocksPerFetch": 25
 }

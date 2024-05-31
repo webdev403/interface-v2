@@ -68,9 +68,18 @@ export const MerklPairFarmCard: React.FC<Props> = ({ farm }) => {
                   <span className='text-bgColor'>{farm.title}</span>
                 </Box>
               )}
-              <Box className={`${styles.farmAPRTitleWrapper} bg-textSecondary`}>
-                <span className='text-gray32'>{farmType.toUpperCase()}</span>
+              <Box className='farmAPRTitleWrapper bg-textSecondary'>
+                <span className='text-gray32'>
+                  {farmType.toUpperCase().includes('QUICKSWAP')
+                    ? 'QUICKSWAP'
+                    : farmType.toUpperCase()}
+                </span>
               </Box>
+              {!!farm?.poolFee && (
+                <Box className='farmAPRTitleWrapper bg-textSecondary'>
+                  <span className='text-gray32'>{farm.poolFee}%</span>
+                </Box>
+              )}
             </Box>
           </Box>
         </Box>

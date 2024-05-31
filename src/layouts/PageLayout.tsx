@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Box, Button } from '@mui/material';
+import { Box, Button, useMediaQuery, useTheme } from '@material-ui/core';
 import { useActiveWeb3React, useIsProMode, useMasaAnalytics } from 'hooks';
 import NewsletterSignupPanel from './NewsletterSignupPanel';
 import Header from 'components/Header';
@@ -80,6 +80,9 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children, name }) => {
     );
   };
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   const showBetaBanner = false;
   const displayNewsletter = false;
 
@@ -95,7 +98,12 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children, name }) => {
         }}
       />
       {!isProMode && <Background fallback={false} />}
-      <Box className={`${pageWrapperClassName} ${headerClass}`}>{children}</Box>
+      <Box
+        className={`${pageWrapperClassName} ${headerClass}`}
+        sx={{ marginTop: isMobile ? '-124px' : '0px' }}
+      >
+        {children}
+      </Box>
       <Footer />
     </Box>
   );

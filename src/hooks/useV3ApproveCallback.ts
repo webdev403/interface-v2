@@ -22,6 +22,10 @@ import { useActiveWeb3React } from 'hooks';
 import { useTokenAllowance } from './useTokenAllowance';
 import { calculateGasMargin } from 'utils';
 import { MergedZap } from 'state/zap/actions';
+import { useIsInfiniteApproval } from 'state/user/hooks';
+import { useDerivedSwapInfo } from 'state/swap/v3/hooks';
+import { maxAmountSpend } from 'utils/v3/maxAmountSpend';
+import { Field } from 'state/swap/v3/actions';
 
 export enum ApprovalState {
   UNKNOWN = 'UNKNOWN',
@@ -63,6 +67,7 @@ export function useApproveCallback(
 
   const tokenContract = useTokenContract(token?.address);
   const addTransaction = useTransactionAdder();
+  // const [isInfiniteApproval] = useIsInfiniteApproval();
 
   const approve = useCallback(async (): Promise<void> => {
     if (approvalState !== ApprovalState.NOT_APPROVED) {
@@ -96,7 +101,11 @@ export function useApproveCallback(
 
     let useExact = false;
     const estimatedGas = await tokenContract.estimateGas
-      .approve(spender, MaxUint256)
+      .approve(
+        spender,
+        // isInfiniteApproval ? MaxUint256 : amountToApprove.quotient.toString()
+        amountToApprove.quotient.toString(),
+      )
       .catch(() => {
         // general fallback for tokens who restrict approval amounts
         useExact = true;
@@ -109,7 +118,10 @@ export function useApproveCallback(
     return tokenContract
       .approve(
         spender,
-        useExact ? amountToApprove.quotient.toString() : MaxUint256,
+        amountToApprove.quotient.toString(),
+        // useExact || !isInfiniteApproval
+        //   ? amountToApprove.quotient.toString()
+        //   : MaxUint256,
         {
           gasLimit: calculateGasMargin(estimatedGas),
         },
@@ -127,12 +139,13 @@ export function useApproveCallback(
       });
   }, [
     approvalState,
+    chainId,
     token,
     tokenContract,
     amountToApprove,
     spender,
+    // isInfiniteApproval,
     addTransaction,
-    chainId,
   ]);
 
   return [approvalState, approve];
@@ -144,6 +157,8 @@ export function useApproveCallbackFromTrade(
   allowedSlippage: Percent,
 ) {
   const { chainId } = useActiveWeb3React();
+  const { currencyBalances } = useDerivedSwapInfo();
+  const [isInfiniteApproval] = useIsInfiniteApproval();
   const isUni = trade?.swaps[0]?.route?.pools[0]?.isUni;
   const v3SwapRouterAddress = chainId
     ? isUni
@@ -157,8 +172,11 @@ export function useApproveCallbackFromTrade(
         : undefined,
     [trade, allowedSlippage],
   );
+  const maxAmountApprove: CurrencyAmount<Currency> | undefined = maxAmountSpend(
+    currencyBalances[Field.INPUT],
+  );
   return useApproveCallback(
-    amountToApprove,
+    isInfiniteApproval ? maxAmountApprove : amountToApprove,
     chainId
       ? trade instanceof V3Trade
         ? v3SwapRouterAddress

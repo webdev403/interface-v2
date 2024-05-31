@@ -9,11 +9,11 @@ import { useActiveWeb3React, useIsProMode } from 'hooks';
 import useSwapRedirects from 'hooks/useSwapRedirect';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useIsV2 } from 'state/application/hooks';
-import { Limit, TWAP } from './LimitAndTWAP/LimitAndTWAP';
 import SwapCrossChain from './SwapCrossChain';
 import SwapV3Page from './SwapV3';
 import styles from 'styles/pages/Swap.module.scss';
 import CrossChainIcon from 'svgs/crossChainIcon.svg';
+import TWAPBase from './LimitAndTWAP/LimitAndTWAP';
 
 const SWAP_BEST_TRADE = 0;
 const SWAP_NORMAL = 1;
@@ -402,8 +402,10 @@ const SwapMain: React.FC = () => {
         {showCrossChain && Number(swapType) === SWAP_CROSS_CHAIN && (
           <SwapCrossChain />
         )}
-        {showLimitOrder && Number(swapType) === SWAP_LIMIT && <Limit />}
-        {swapType === SWAP_TWAP.toString() && <TWAP />}
+        {showLimitOrder && Number(swapType) === SWAP_LIMIT && (
+          <TWAPBase limit={true} />
+        )}
+        {swapType === SWAP_TWAP.toString() && <TWAPBase limit={false} />}
       </Box>
     </>
   );

@@ -541,5 +541,10 @@ wcm-modal {
 }
 
 picture {
-  display: flex;
+  display: flex;}
+#tosPage ol {
+  padding-left: 16px;
+  li {
+    margin-bottom: 16px;
+  }
 }

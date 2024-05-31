@@ -3,7 +3,6 @@ import { Skeleton } from '@mui/lab';
 import { CurrencyLogo, CustomMenu } from 'components';
 import RangeBadge from 'components/v3/Badge/RangeBadge';
 import { useActiveWeb3React } from 'hooks';
-import { useMerklContract } from 'hooks/useContract';
 import { useICHIPosition } from 'hooks/useICHIData';
 import { useDefiEdgePosition } from 'hooks/v3/useDefiedgeStrategyData';
 import { useGammaPosition } from 'hooks/v3/useGammaData';
@@ -23,21 +22,17 @@ import WithdrawSteerLiquidityModal from 'components/pages/pools/MySteerPoolsV3/W
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import { useSelectedTokenList } from 'state/lists/hooks';
-import { calculateGasMargin, formatNumber, getTokenFromAddress } from 'utils';
+import { formatNumber, getTokenFromAddress } from 'utils';
 import {
   useUSDCPriceFromAddress,
   useUSDCPricesFromAddresses,
 } from 'utils/useUSDCPrice';
 import { Position } from 'v3lib/entities';
-import { TransactionResponse } from '@ethersproject/providers';
-import {
-  useTransactionAdder,
-  useTransactionFinalizer,
-} from 'state/transactions/hooks';
 import TotalAPRTooltip from 'components/TotalAPRToolTip';
 import { toV3Token } from 'constants/v3/addresses';
 import styles from 'styles/pages/Farm.module.scss';
 import Image from 'next/image';
+import { useClaimMerklRewards } from 'hooks/useClaimMerklRewards';
 
 interface Props {
   farm: any;
@@ -45,7 +40,7 @@ interface Props {
 
 export const MerklPairFarmCardDetails: React.FC<Props> = ({ farm }) => {
   const { t } = useTranslation();
-  const { chainId, account } = useActiveWeb3React();
+  const { chainId } = useActiveWeb3React();
   const { breakpoints } = useTheme();
   const isMobile = useMediaQuery(breakpoints.down('sm'));
 
@@ -53,7 +48,7 @@ export const MerklPairFarmCardDetails: React.FC<Props> = ({ farm }) => {
   const isICHI = !!farm.label.includes('Ichi');
   const isGamma = !!farm.label.includes('Gamma');
   const isDefiEdge = !!farm.label.includes('DefiEdge');
-  const isQuickswap = farm.label === 'QuickSwap';
+  const isQuickswap = farm.label.toLowerCase().includes('quickswap');
   const isSteer = !!farm.label.includes('Steer');
 
   const { loading: loadingICHI, vault: ichiPosition } = useICHIPosition(
@@ -81,6 +76,7 @@ export const MerklPairFarmCardDetails: React.FC<Props> = ({ farm }) => {
   const { loading: loadingQS, positions: qsPositions } = useV3PositionsFromPool(
     farm?.token0?.address,
     farm?.token1?.address,
+    farm?.poolFee ? Number(farm.poolFee) * 10000 : undefined,
   );
 
   const [selectedQSNFTId, setSelectedQSNFTId] = useState('');
@@ -227,10 +223,19 @@ export const MerklPairFarmCardDetails: React.FC<Props> = ({ farm }) => {
     farm.rewards.map((reward: any) => reward.address),
   );
 
-  const farmTypeReward =
-    farmType === 'QuickSwap' ? 'QuickswapAlgebra' : farmType;
+  const rewardKey = useMemo(() => {
+    if (isQuickswap) {
+      if (selectedQSNFTId) {
+        return farmType + '_' + selectedQSNFTId;
+      }
+      return farmType;
+    }
+    if (farm?.almAddress) {
+      return farmType + '_' + farm.almAddress.toLowerCase();
+    }
+    return farmType;
+  }, [farm.almAddress, farmType, isQuickswap, selectedQSNFTId]);
 
-  const [claiming, setClaiming] = useState(false);
   const rewardUSD = farm.rewards.reduce(
     (total: number, reward: any) =>
       total +
@@ -238,70 +243,18 @@ export const MerklPairFarmCardDetails: React.FC<Props> = ({ farm }) => {
         (item: any) =>
           item.address.toLowerCase() === reward.address.toLowerCase(),
       )?.price ?? 0) *
-        reward.breakdownOfUnclaimed[farmTypeReward],
+        reward.breakdownOfUnclaimed[rewardKey],
     0,
   );
+
+  const { claiming, claimReward } = useClaimMerklRewards();
 
   const isClaimable =
     farm.rewards.length > 0 &&
     farm.rewards.filter(
-      (reward: any) => reward.breakdownOfUnclaimed[farmTypeReward] > 0,
+      (reward: any) => reward.breakdownOfUnclaimed[rewardKey] > 0,
     ).length > 0 &&
     !claiming;
-
-  const merklDistributorContract = useMerklContract();
-  const addTransaction = useTransactionAdder();
-  const finalizedTransaction = useTransactionFinalizer();
-  const claimReward = async () => {
-    if (!merklDistributorContract || !account) return;
-    setClaiming(true);
-    let data: any;
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_MERKL_API_URL}?chainIds[]=${chainId}&AMMs[]=quickswapalgebra&user=${account}`,
-      );
-      const merklData = await res.json();
-      data =
-        merklData && merklData[chainId]
-          ? merklData[chainId].transactionData
-          : undefined;
-    } catch {
-      setClaiming(false);
-      throw 'Angle API not responding';
-    }
-    // Distributor address is the same across different chains
-    const tokens = Object.keys(data).filter((k) => data[k].proof !== undefined);
-    const claims = tokens.map((t) => data[t].claim);
-    const proofs = tokens.map((t) => data[t].proof);
-
-    try {
-      const estimatedGas = await merklDistributorContract.estimateGas.claim(
-        tokens.map((_) => account),
-        tokens,
-        claims,
-        proofs as string[][],
-      );
-      const response: TransactionResponse = await merklDistributorContract.claim(
-        tokens.map((_) => account),
-        tokens,
-        claims,
-        proofs as string[][],
-        {
-          gasLimit: calculateGasMargin(estimatedGas),
-        },
-      );
-      addTransaction(response, {
-        summary: t('claimingReward') ?? '',
-      });
-      const receipt = await response.wait();
-      finalizedTransaction(receipt, {
-        summary: t('claimedReward') ?? '',
-      });
-      setClaiming(false);
-    } catch {
-      setClaiming(false);
-    }
-  };
 
   return (
     <Box padding={2} className={styles.v3PairFarmCardDetailsWrapper}>
@@ -494,8 +447,11 @@ export const MerklPairFarmCardDetails: React.FC<Props> = ({ farm }) => {
                     onClick={() => {
                       let currencyStr = '';
                       if (isICHI) {
-                        if (farm?.token0) {
-                          currencyStr += `currency=${farm.token0.address}`;
+                        const farmToken = farm?.allowToken0
+                          ? farm?.token0
+                          : farm?.token1;
+                        if (farmToken) {
+                          currencyStr += `currency=${farmToken.address}`;
                         }
                       } else {
                         if (farm?.token0) {
@@ -557,9 +513,7 @@ export const MerklPairFarmCardDetails: React.FC<Props> = ({ farm }) => {
                     >
                       <CurrencyLogo currency={token} />
                       <small>
-                        {formatNumber(
-                          reward.breakdownOfUnclaimed[farmTypeReward],
-                        )}{' '}
+                        {formatNumber(reward.breakdownOfUnclaimed[rewardKey])}{' '}
                         {token?.symbol}
                       </small>
                     </Box>

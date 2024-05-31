@@ -104,13 +104,13 @@ export function PresetRanges({
   const gammaBaseLowerData = useMultipleContractSingleData(
     gammaPairAddresses,
     new Interface(GammaPairABI),
-    'baseLower',
+    'limitLower',
   );
 
   const gammaBaseUpperData = useMultipleContractSingleData(
     gammaPairAddresses,
     new Interface(GammaPairABI),
-    'baseUpper',
+    'limitUpper',
   );
 
   const gammaCurrentTickData = useMultipleContractSingleData(
@@ -286,8 +286,7 @@ export function PresetRanges({
               currentTick !== undefined
                 ? Math.pow(1.0001, maxTick - currentTick)
                 : 0;
-            const pairStrategyName =
-              pair?.strategy?.strategyConfigData?.name ?? '';
+            const pairStrategyName = pair?.strategyName ?? '';
             const isInRange = minTick < currentTick && currentTick < maxTick;
             const pairType = isInRange
               ? pairStrategyName.toLowerCase().includes('stable')

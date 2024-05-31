@@ -3,10 +3,10 @@ import { IchiVaults } from 'constants/index';
 import { useActiveWeb3React } from 'hooks';
 import { useSelectedTokenList } from 'state/lists/hooks';
 import { useMultipleContractSingleData } from 'state/multicall/v3/hooks';
-import { getTokenFromAddress } from 'utils';
+import { getFixedValue, getTokenFromAddress } from 'utils';
 import ICHIVaultABI from 'constants/abis/ichi-vault.json';
 import { Interface, formatUnits, parseUnits } from 'ethers/lib/utils';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import {
   SupportedDex,
   getIchiVaultInfo,
@@ -94,7 +94,7 @@ const fetchVaultAPR = async (
           const tvlUSD =
             Number(totalAmounts?.total0 ?? 0) * usdPriceToken0 +
             Number(totalAmounts?.total1 ?? 0) * usdPriceToken1;
-          const apr = tvlUSD > 0 ? (avgFee24hUSD * 365) / tvlUSD : 0;
+          const apr = tvlUSD > 0 ? ((avgFee24hUSD * 365) / tvlUSD) * 100 : 0;
           return apr;
         } catch (e) {
           console.log('Err in fetching ICHI Vault APR', e);
@@ -123,6 +123,7 @@ export const useICHIVaultAPR = (
       vault.address,
       usdPrices?.map((item) => item.price).join('_'),
       chainId,
+      !!provider,
     ],
     queryFn: async () => {
       if (!provider || !usdPrices) return 0;
@@ -167,9 +168,9 @@ export const useICHIVaultAPRs = (
 export const useICHIVaultInfo = (vaultAddress?: string) => {
   const { chainId, provider } = useActiveWeb3React();
   return useQuery({
-    queryKey: ['ichi-vault-info', vaultAddress],
+    queryKey: ['ichi-vault-info', vaultAddress, !!provider],
     queryFn: async () => {
-      if (!vaultAddress) return null;
+      if (!vaultAddress || !provider) return null;
       try {
         const vaultInfo = await getIchiVaultInfo(
           Number(chainId),
@@ -183,7 +184,6 @@ export const useICHIVaultInfo = (vaultAddress?: string) => {
         return null;
       }
     },
-    enabled: !!provider || !!vaultAddress,
   });
 };
 
@@ -204,7 +204,7 @@ export const useICHIVaults = () => {
   );
 
   const { isLoading: loadingVaultsInfo, data: vaultsInfo } = useQuery({
-    queryKey: ['ichi-vaults-info', vaultAddresses.join('-')],
+    queryKey: ['ichi-vaults-info', vaultAddresses.join('-'), !!provider],
     queryFn: async () => {
       const vaults = await Promise.all(
         vaultAddresses.map(async (address) => {
@@ -224,7 +224,6 @@ export const useICHIVaults = () => {
       );
       return vaults;
     },
-    enabled: !!provider,
   });
 
   const loading = loadingVaultsInfo || !!feeCalls.find((call) => call.loading);
@@ -267,7 +266,7 @@ export const useICHIVaultTotalSupply = (vault?: ICHIVault) => {
   const { provider } = useActiveWeb3React();
   const lastTx = useLastTransactionHash();
   const { isLoading, data, refetch } = useQuery({
-    queryKey: ['ichi-vault-total-supply', vault?.address],
+    queryKey: ['ichi-vault-total-supply', vault?.address, !!provider],
     queryFn: async () => {
       if (!vault || !provider) return null;
       const totalSupply = await getTotalSupply(
@@ -277,22 +276,16 @@ export const useICHIVaultTotalSupply = (vault?: ICHIVault) => {
       );
       return Number(totalSupply);
     },
-    enabled: !!vault && !!provider,
+    refetchInterval: 300000,
   });
-  const [currentTime, setCurrentTime] = useState(Math.floor(Date.now() / 1000));
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      const _currentTime = Math.floor(Date.now() / 1000);
-      setCurrentTime(_currentTime);
-    }, 300000);
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    refetch();
+    setTimeout(() => {
+      refetch();
+    }, 30000);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentTime, lastTx]);
+  }, [lastTx]);
+
   return { isLoading, data };
 };
 
@@ -304,6 +297,7 @@ export const useICHIVaultUserBalances = (vaults: ICHIVault[]) => {
       'ichi-vaults-user-balance',
       account,
       vaults.map(({ address }) => address).join('_'),
+      !!provider,
     ],
     queryFn: async () => {
       if (!account || !provider) return;
@@ -325,11 +319,12 @@ export const useICHIVaultUserBalances = (vaults: ICHIVault[]) => {
       );
       return vaultBalances;
     },
-    enabled: !!account && !!provider,
   });
 
   useEffect(() => {
-    refetch();
+    setTimeout(() => {
+      refetch();
+    }, 30000);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lastTx]);
   return { isLoading, data };
@@ -343,27 +338,34 @@ export const useICHIVaultsUserAmounts = (vaults: ICHIVault[]) => {
       'ichi-vaults-user-amounts',
       account,
       vaults.map(({ address }) => address).join('_'),
+      !!provider,
     ],
     queryFn: async () => {
-      if (!account || !provider) return;
+      if (!account || !provider) return null;
       const userAmounts = await Promise.all(
         vaults.map(async (vault) => {
-          const amounts = await getUserAmounts(
-            account,
-            vault.address,
-            provider,
-            SupportedDex.Quickswap,
-          );
-          return { address: vault.address, amounts };
+          try {
+            const amounts = await getUserAmounts(
+              account,
+              vault.address,
+              provider,
+              SupportedDex.Quickswap,
+            );
+            return { address: vault.address, amounts };
+          } catch (e) {
+            console.log('error', e);
+            return { address: vault.address, amounts: undefined };
+          }
         }),
       );
       return userAmounts;
     },
-    enabled: !!account && !!provider,
   });
 
   useEffect(() => {
-    refetch();
+    setTimeout(() => {
+      refetch();
+    }, 30000);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lastTx]);
   return { isLoading, data };
@@ -373,23 +375,27 @@ export const useICHIVaultUserAmounts = (vault?: string) => {
   const { account, provider } = useActiveWeb3React();
   const lastTx = useLastTransactionHash();
   const { isLoading, data, refetch } = useQuery({
-    queryKey: ['ichi-vault-user-amounts', account, vault],
+    queryKey: ['ichi-vault-user-amounts', account, vault, !!provider],
     queryFn: async () => {
       if (!account || !provider || !vault) return null;
-
-      const amounts = await getUserAmounts(
-        account,
-        vault,
-        provider,
-        SupportedDex.Quickswap,
-      );
-      return amounts;
+      try {
+        const amounts = await getUserAmounts(
+          account,
+          vault,
+          provider,
+          SupportedDex.Quickswap,
+        );
+        return amounts;
+      } catch {
+        return null;
+      }
     },
-    enabled: !!account && !!provider,
   });
 
   useEffect(() => {
-    refetch();
+    setTimeout(() => {
+      refetch();
+    }, 30000);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lastTx]);
   return { isLoading, data };
@@ -399,7 +405,7 @@ export const useICHIVaultUserBalance = (vault?: string) => {
   const { account, provider } = useActiveWeb3React();
   const lastTx = useLastTransactionHash();
   const { isLoading, data, refetch } = useQuery({
-    queryKey: ['ichi-vault-user-balance', vault, account],
+    queryKey: ['ichi-vault-user-balance', vault, account, !!provider],
     queryFn: async () => {
       if (!vault || !account || !provider) return null;
       const balanceBN = await getUserBalance(
@@ -411,11 +417,12 @@ export const useICHIVaultUserBalance = (vault?: string) => {
       );
       return { balanceBN, balance: Number(formatUnits(balanceBN)) };
     },
-    enabled: !!vault && !!account && !!provider,
   });
 
   useEffect(() => {
-    refetch();
+    setTimeout(() => {
+      refetch();
+    }, 30000);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lastTx]);
   return { isLoading, data };
@@ -448,14 +455,14 @@ export const useICHIVaultApproval = (
 ) => {
   const { account, provider } = useActiveWeb3React();
   const lastTx = useLastTransactionHash();
-  const { isLoading, data } = useQuery({
+  const { isLoading, data, refetch } = useQuery({
     queryKey: [
       'ichi-deposit-approval',
       account,
       vault?.address,
       amount,
       tokenIdx,
-      lastTx,
+      !!provider,
     ],
     queryFn: async () => {
       if (
@@ -483,11 +490,18 @@ export const useICHIVaultApproval = (
     },
   });
 
+  useEffect(() => {
+    setTimeout(() => {
+      refetch();
+    }, 30000);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lastTx]);
+
   return { isLoading, data };
 };
 
 export const useICHIVaultDepositData = (
-  amount: number,
+  amount: string,
   currency?: Currency,
   vault?: ICHIVault,
 ) => {
@@ -516,7 +530,7 @@ export const useICHIVaultDepositData = (
   }, [currency, vault]);
 
   const { isLoading, data: maxAvailable } = useQuery({
-    queryKey: ['ichi-vault-max-available-deposit', vault?.address],
+    queryKey: ['ichi-vault-max-available-deposit', vault?.address, !!provider],
     queryFn: async () => {
       if (!vault || !provider || tokenIdx === undefined) return null;
       const maxAvailable = await getMaxDepositAmount(
@@ -542,7 +556,7 @@ export const useICHIVaultDepositData = (
     : balanceBN;
 
   const amountBN = JSBI.BigInt(
-    parseUnits(amount.toFixed(currency?.decimals), currency?.decimals),
+    parseUnits(getFixedValue(amount), currency?.decimals),
   );
 
   const wrapAmount = useMemo(() => {

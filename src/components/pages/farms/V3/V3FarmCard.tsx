@@ -8,6 +8,7 @@ import { useRouter } from 'next/router';
 import { V3FarmPair } from './AllV3Farms';
 import styles from 'styles/pages/Farm.module.scss';
 import Image from 'next/image';
+import Loader from '@orbs-network/twap-ui/dist/components/base/Loader';
 
 interface Props {
   farm: V3FarmPair;
@@ -120,7 +121,11 @@ export const V3FarmCard: React.FC<Props> = ({ farm }) => {
             className='flex items-center justify-between'
           >
             {isMobile && <p>{t('tvl')}</p>}
-            <p>${formatNumber(farm.tvl)}</p>
+            {farm.farms.find((item) => item.loading) ? (
+              <Loader />
+            ) : (
+              <p>${formatNumber(farm.tvl)}</p>
+            )}
           </Box>
           <Box
             width={isMobile ? '100%' : '20%'}
@@ -142,7 +147,7 @@ export const V3FarmCard: React.FC<Props> = ({ farm }) => {
                   </Box>
                 </V3FarmAPRTooltip>
               </Box>
-            </Box>
+            
           </Box>
           <Box
             width={isMobile ? '100%' : '30%'}
@@ -172,6 +177,7 @@ export const V3FarmCard: React.FC<Props> = ({ farm }) => {
           </Button>
         </Box>
       </Box>
+    </Box>
     </Box>
   );
 };

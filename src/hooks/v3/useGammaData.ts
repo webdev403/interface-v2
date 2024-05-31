@@ -6,11 +6,18 @@ import { useLastTransactionHash } from 'state/transactions/hooks';
 import GammaPairABI from 'constants/abis/gamma-hypervisor.json';
 import { useSingleCallResult } from 'state/multicall/v3/hooks';
 import { formatUnits } from 'ethers/lib/utils';
+import { useEffect } from 'react';
 
 const gammaChainName = (chainId?: ChainId) => {
   switch (chainId) {
     case ChainId.ZKEVM:
       return 'polygon-zkevm';
+    case ChainId.MANTA:
+      return 'manta';
+    case ChainId.IMX:
+      return 'immutable-zkevm';
+    case ChainId.ASTARZKEVM:
+      return 'astar-zkevm';
     default:
       return 'polygon';
   }
@@ -24,7 +31,16 @@ const getGammaData = async (chainId?: ChainId) => {
         chainId,
       )}/hypervisors/allData`,
     );
-    const gammaData = await data.json();
+    let gammaData = await data.json();
+    if (chainId === ChainId.ZKEVM) {
+      const uniswapData = await fetch(
+        `${
+          process.env.REACT_APP_GAMMA_API_ENDPOINT
+        }/quickswap-uniswap/${gammaChainName(chainId)}/hypervisors/allData`,
+      );
+      const gammaUniData = await uniswapData.json();
+      gammaData = { ...gammaData, ...gammaUniData };
+    }
     return gammaData;
   } catch {
     try {
@@ -33,7 +49,16 @@ const getGammaData = async (chainId?: ChainId) => {
           process.env.NEXT_PUBLIC_GAMMA_API_ENDPOINT_BACKUP
         }/quickswap/${gammaChainName(chainId)}/hypervisors/allData`,
       );
-      const gammaData = await data.json();
+      let gammaData = await data.json();
+      if (chainId === ChainId.ZKEVM) {
+        const uniswapData = await fetch(
+          `${
+            process.env.REACT_APP_GAMMA_API_ENDPOINT_BACKUP
+          }/quickswap-uniswap/${gammaChainName(chainId)}/hypervisors/allData`,
+        );
+        const gammaUniData = await uniswapData.json();
+        gammaData = { ...gammaData, ...gammaUniData };
+      }
       return gammaData;
     } catch (e) {
       console.log(e);
@@ -121,14 +146,23 @@ export const useGammaRewards = () => {
 export const useGammaPositions = () => {
   const { account, chainId } = useActiveWeb3React();
   const lastTx = useLastTransactionHash();
-  return useQuery({
-    queryKey: ['fetchGammaPositions', account, chainId, lastTx],
+  const { isLoading, data, refetch } = useQuery({
+    queryKey: ['fetchGammaPositions', account, chainId],
     queryFn: async () => {
       const gammaRewards = await getGammaPositions(account, chainId);
       return gammaRewards;
     },
     refetchInterval: 300000,
   });
+
+  useEffect(() => {
+    setTimeout(() => {
+      refetch();
+    }, 30000);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lastTx]);
+
+  return { isLoading, data };
 };
 
 export const useGammaPosition = (

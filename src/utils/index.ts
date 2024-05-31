@@ -63,6 +63,7 @@ import { SteerVault } from 'hooks/v3/useSteerData';
 import { LiquidityDex } from '@ape.swap/apeswap-lists';
 import { DEX } from '@soulsolidity/soulzap-v1';
 import { WrappedTokenInfo } from 'state/lists/v3/wrappedTokenInfo';
+import { FeeAmount } from 'v3lib/utils';
 
 dayjs.extend(utc);
 dayjs.extend(weekOfYear);
@@ -1007,7 +1008,7 @@ export const getUnipilotPositions = async (
     if (!res.ok) {
       const errorText = await res.text();
       throw new Error(
-        errorText || res.statusText || `Failed to get unipilot positions`,
+        errorText || res.statusText || `Failed to get A51 Finance positions`,
       );
     }
     const data = await res.json();
@@ -1051,7 +1052,7 @@ export const getUnipilotFarmData = async (
     if (!res.ok) {
       const errorText = await res.text();
       throw new Error(
-        errorText || res.statusText || `Failed to get unipilot farms`,
+        errorText || res.statusText || `Failed to get A51 Finance farms`,
       );
     }
     const data = await res.json();
@@ -1075,7 +1076,7 @@ export const getUnipilotUserFarms = async (
     if (!res.ok) {
       const errorText = await res.text();
       throw new Error(
-        errorText || res.statusText || `Failed to get unipilot user farms`,
+        errorText || res.statusText || `Failed to get A51 Finance user farms`,
       );
     }
     const data = await res.json();
@@ -1101,6 +1102,7 @@ export const getGammaPairsForTokens = (
   chainId?: ChainId,
   address0?: string,
   address1?: string,
+  feeAmount?: FeeAmount,
 ) => {
   const config = getConfig(chainId);
   const gammaAvailable = config['gamma']['available'];
@@ -1108,9 +1110,19 @@ export const getGammaPairsForTokens = (
     const gammaPairs = GammaPairs[chainId];
     if (!gammaPairs) return;
     const pairs =
-      gammaPairs[address0.toLowerCase() + '-' + address1.toLowerCase()];
+      gammaPairs[
+        address0.toLowerCase() +
+          '-' +
+          address1.toLowerCase() +
+          `${feeAmount ? `-${feeAmount}` : ''}`
+      ];
     const reversedPairs =
-      gammaPairs[address1.toLowerCase() + '-' + address0.toLowerCase()];
+      gammaPairs[
+        address1.toLowerCase() +
+          '-' +
+          address0.toLowerCase() +
+          `${feeAmount ? `-${feeAmount}` : ''}`
+      ];
     if (pairs) {
       return { reversed: false, pairs };
     } else if (reversedPairs) {
@@ -1136,6 +1148,8 @@ export enum LiquidityProtocol {
   V3 = 3,
   Algebra = 4,
   Gamma = 5,
+  Steer = 6,
+  Solidly = 7,
 }
 
 export const getLiquidityDexIndex = (dex?: string, isLP?: boolean) => {
@@ -1144,6 +1158,12 @@ export const getLiquidityDexIndex = (dex?: string, isLP?: boolean) => {
       return LiquidityProtocol.Gamma;
     }
     return LiquidityProtocol.Algebra;
+  }
+  if (dex === 'UniswapV3') {
+    if (isLP) {
+      return LiquidityProtocol.Steer;
+    }
+    return LiquidityProtocol.V3;
   }
   return LiquidityProtocol.V2;
 };
@@ -1247,8 +1267,9 @@ export const getSteerRatio = (tokenType: number, steerVault: SteerVault) => {
 };
 
 export const getSteerDexName = (chainId?: ChainId) => {
-  if (chainId === ChainId.MANTA) return 'quickswapv3';
-  return 'quickswap';
+  if (chainId === ChainId.MATIC) return 'quickswap';
+  if (chainId === ChainId.LAYERX ) return 'quickswapalgebra';
+  return 'quickswapv3';
 };
 
 export const searchForBillId = (

@@ -18,10 +18,7 @@ const NewsletterSignupForm: React.FC = () => {
       <Box>
         <p>{t('dragonDispatch')}</p>
         <h4>{t('newsletterSignup')}</h4>
-        <small className='text-primaryText'>
-          {t('newsletterSignupDesc')}&nbsp;
-          <b>{t('earn300QUICK')}</b>
-        </small>
+        <small className='text-primaryText'>{t('newsletterSignupDesc')}</small>
       </Box>
       <Box className={styles.newsletterSignupFormWrapper}>
         <Box className={styles.newsletterSignupForm}>

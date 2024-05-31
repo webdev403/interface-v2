@@ -6,6 +6,7 @@
   "aprAPINetwork": "DogeChain",
   "networkName": "DogeChain",
   "isMainnet": true,
+  "visible": true,
   "chainId": 2000,
   "nativeCurrencyImage": "/doge.png",
   "nativeCurrency": {
@@ -42,6 +43,7 @@
     "available": false
   },
   "analytics": {
+    "liquidityHub": false,
     "available": true
   },
   "lending": {

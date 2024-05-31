@@ -16,11 +16,13 @@ import {
   useBonusRouterManager,
   useSlippageManuallySet,
   useUserSingleHopOnly,
+  useIsInfiniteApproval,
 } from 'state/user/hooks';
 import { Close } from '@mui/icons-material';
 import styles from 'styles/components/SettingsModal.module.scss';
 import { useTranslation } from 'next-i18next';
 import { LiquidityHubTxSettings } from 'components/Swap/LiquidityHub';
+import { SLIPPAGE_AUTO } from 'state/user/reducer';
 
 enum SlippageError {
   InvalidInput = 'InvalidInput',
@@ -49,6 +51,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ open, onClose }) => {
   const [expertMode, toggleExpertMode] = useExpertModeManager();
   const [bonusRouterDisabled, toggleSetBonusRouter] = useBonusRouterManager();
   const [singleHopOnly, setSingleHopOnly] = useUserSingleHopOnly();
+  const [isInfiniteApproval, setIsInfiniteApproval] = useIsInfiniteApproval();
+
   const [slippageInput, setSlippageInput] = useState('');
   const [deadlineInput, setDeadlineInput] = useState('');
   const [expertConfirm, setExpertConfirm] = useState(false);
@@ -64,6 +68,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ open, onClose }) => {
   const slippageError = useMemo(() => {
     if (slippageInput !== '' && !slippageInputIsValid) {
       return SlippageError.InvalidInput;
+    } else if (userSlippageTolerance === SLIPPAGE_AUTO) {
+      return undefined;
     } else if (slippageInputIsValid && userSlippageTolerance < 50) {
       return SlippageError.RiskyLow;
     } else if (slippageInputIsValid && userSlippageTolerance > 500) {
@@ -281,8 +287,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ open, onClose }) => {
         )}
         <Divider />
         <Box my={2.5} className='flex items-center justify-between'>
-          <Box className='flex items-center'>
-            <p style={{ marginRight: 6 }}>{t('expertMode')}</p>
+          <Box className='flex items-center'component={"div"} gap={6}>
+            <p>{t('expertMode')}</p>
             <QuestionHelper size={20} text={t('expertModeHelper')} />
           </Box>
           <ToggleSwitch
@@ -299,9 +305,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ open, onClose }) => {
         </Box>
         <Divider />
         <Box my={2.5} className='flex items-center justify-between'>
-          <Box className='flex items-center'>
-            <p style={{ marginRight: 6 }}>{t('disableBonusRouter')}</p>
-          </Box>
+          <p>{t('disableBonusRouter')}</p>
           <ToggleSwitch
             toggled={bonusRouterDisabled}
             onToggle={toggleSetBonusRouter}
@@ -309,12 +313,18 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ open, onClose }) => {
         </Box>
         <Divider />
         <Box my={2.5} className='flex items-center justify-between'>
-          <Box className='flex items-center'>
-            <p style={{ marginRight: 6 }}>{t('singleRouteOnly')}</p>
-          </Box>
+          <p>{t('singleRouteOnly')}</p>
           <ToggleSwitch
             toggled={singleHopOnly}
             onToggle={() => setSingleHopOnly(!singleHopOnly)}
+          />
+        </Box>
+        <Divider />
+        <Box my={2.5} className='flex items-center justify-between'>
+          <p>{t('infiniteApproval')}</p>
+          <ToggleSwitch
+            toggled={isInfiniteApproval}
+            onToggle={() => setIsInfiniteApproval(!isInfiniteApproval)}
           />
         </Box>
         <Divider />
