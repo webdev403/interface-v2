@@ -6,10 +6,10 @@ import BuyBondModal from './BuyBondModal';
 import BondTokenDisplay from './BondTokenDisplay';
 import { formatCompact, formatNumber } from 'utils';
 import { useActiveWeb3React } from 'hooks';
-import { BigNumber } from 'ethers';
+import { BigNumber } from '@ethersproject/bignumber';
 import { Bond } from 'types/bond';
-import { Skeleton } from '@mui/lab';
-import { formatUnits } from 'ethers/lib/utils';
+import { Skeleton } from '@mui/material';
+import { formatUnits } from 'ethers';
 import styles from 'styles/pages/Bonds.module.scss';
 
 interface BondItemProps {
@@ -34,11 +34,8 @@ const BondItem: React.FC<BondItemProps> = ({ bond }) => {
     return Math.floor(Number(bond.vestingTerm) / (3600 * 24));
   }, [bond]);
   const available = Number(
-    formatUnits(
-      BigNumber.from(bond?.maxTotalPayOut ?? '0').sub(
-        BigNumber.from(bond?.totalPayoutGiven ?? '0'),
-      ),
-      token3Obj?.decimals?.[chainId] ?? undefined,
+    BigNumber.from(bond?.maxTotalPayOut ?? '0').sub(
+      BigNumber.from(bond?.totalPayoutGiven ?? '0'),
     ),
   );
   const thresholdToShow =

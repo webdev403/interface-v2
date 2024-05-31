@@ -1,8 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Box, Button, useMediaQuery } from '@mui/material';
-import {  Close } from '@mui/icons-material';
-import { useTheme } from '@mui/material/styles';
+import { Box, Button, useMediaQuery, useTheme } from '@mui/material';
+import { Close } from '@mui/icons-material';
 import { useUDDomain, useWalletModalToggle } from 'state/application/hooks';
 import {
   isTransactionRecent,
@@ -15,6 +14,7 @@ import { WalletModal } from 'components';
 import { useActiveWeb3React } from 'hooks';
 import styles from 'styles/components/Header.module.scss';
 // import { ReactComponent as LightIcon } from 'assets/images/LightIcon.svg';
+import 'styles/components/Header.module.scss';
 import { useTranslation } from 'react-i18next';
 import { getConfig } from 'config/index';
 import useDeviceWidth from 'hooks/useDeviceWidth';
@@ -329,12 +329,6 @@ const Header: React.FC<{ onUpdateNewsletter: (val: boolean) => void }> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chainId, parsedChain]);
 
-  // function toggleNetworkSelectionModal(
-  //   _event: MouseEvent<HTMLDivElement, MouseEvent>,
-  // ): void {
-  //   throw new Error('Function not implemented.');
-  // }
-
   return (
     <Box className={styles.header}>
       {showNewsletter && (
@@ -379,7 +373,7 @@ const Header: React.FC<{ onUpdateNewsletter: (val: boolean) => void }> = ({
               <picture>
                 <source
                   height={60}
-                  srcSet={'assets/images/quickLogo.webp'}
+                  srcSet='assets/images/quickLogo.webp'
                   type='image/webp'
                 />
                 <img src={QuickLogo} alt='QuickLogo' height={60} />
@@ -419,7 +413,7 @@ const Header: React.FC<{ onUpdateNewsletter: (val: boolean) => void }> = ({
             {/* {!parsedChain && (
               <Box
                 className={styles.networkSelection}
-                onClick={() => toggleNetworkSelectionModal()}
+                onClick={toggleNetworkSelectionModal}
               >
                 {isSupportedNetwork && (
                   <Box className={styles.networkSelectionImage}>

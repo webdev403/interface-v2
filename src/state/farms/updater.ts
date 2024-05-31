@@ -1,3 +1,9 @@
+import { useCallback, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useActiveWeb3React } from 'hooks';
+import useInterval from 'hooks/useInterval';
+import useIsWindowVisible from 'hooks/useIsWindowVisible';
+import { AppDispatch, AppState } from 'state';
 
 export default function Updater(): null {
   /**const { library } = useActiveWeb3React();

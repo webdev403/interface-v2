@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Box } from '@mui/material/';
+import { Box } from '@mui/material';
 import Image from 'next/image';
 import { SUPPORTED_CHAINIDS } from 'constants/index';
 import { getConfig } from 'config/index';
@@ -7,7 +7,7 @@ import { useActiveWeb3React } from 'hooks';
 import { useTranslation } from 'react-i18next';
 import { ChainId } from '@uniswap/sdk';
 import { useIsSupportedNetwork } from 'utils';
-import styles from 'styles/components/Dropdown.module.scss';
+import styles from 'styles/components/NetworkSelectionDropdown.module.scss';
 import {
   networkConnection,
   walletConnectConnection,
@@ -109,7 +109,7 @@ const NetworkSelectionDropdown: React.FC = () => {
             </Box>
             {isSupportedNetwork && chainId && chainId === chain && (
               <img
-                src={"assets/images/chainActiveDot.png"}
+                src='assets/images/chainActiveDot.png'
                 alt='chain active'
                 width={12}
                 height={12}

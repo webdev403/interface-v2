@@ -7,7 +7,7 @@ import { CurrencyLogo } from 'components';
 import IncreaseDefiedgeLiquidityModal from './IncreaseDefiedgeLiquidityModal';
 import WithdrawDefiedgeLiquidityModal from './WithdrawDefiedgeLiquidityModal';
 import { useDefiedgeStrategyData } from 'hooks/v3/useDefiedgeStrategyData';
-import { formatUnits } from 'ethers/lib/utils';
+import { formatUnits } from 'ethers';
 
 const DefiedgeLPItemDetails: React.FC<{ defiedgePosition: any }> = ({
   defiedgePosition,

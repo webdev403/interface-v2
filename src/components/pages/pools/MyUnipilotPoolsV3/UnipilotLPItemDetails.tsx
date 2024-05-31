@@ -10,7 +10,7 @@ import { JSBI } from '@uniswap/sdk';
 import { useSingleCallResult } from 'state/multicall/v3/hooks';
 import { useUniPilotVaultContract } from 'hooks/useContract';
 import { useTokenBalance } from 'state/wallet/v3/hooks';
-import { formatUnits } from 'ethers/lib/utils';
+import { formatUnits } from 'ethers';
 import { UnipilotPosition } from 'hooks/v3/useV3Positions';
 
 const UnipilotLPItemDetails: React.FC<{ position: UnipilotPosition }> = ({

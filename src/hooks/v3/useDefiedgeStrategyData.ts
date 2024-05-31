@@ -1,4 +1,4 @@
-import { Interface, formatUnits } from 'ethers/lib/utils';
+import { Interface, formatUnits } from 'ethers';
 import { useContract, useDefiedgeStrategyContract } from 'hooks/useContract';
 import { useEffect, useState } from 'react';
 import {
@@ -7,7 +7,7 @@ import {
 } from 'state/multicall/v3/hooks';
 import PoolABI from 'constants/abis/v3/pool.json';
 import { TickMath, tickToPrice } from 'v3lib/utils';
-import { BigNumber } from 'ethers';
+import { BigNumber } from '@ethersproject/bignumber';
 import DEFIEDGE_STRATEGY_ABI from 'constants/abis/defiedge-strategy.json';
 import { useActiveWeb3React } from 'hooks';
 import { getAllDefiedgeStrategies } from 'utils';

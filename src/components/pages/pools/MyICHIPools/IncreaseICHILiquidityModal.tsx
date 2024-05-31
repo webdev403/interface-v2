@@ -17,7 +17,8 @@ import {
 } from 'state/transactions/hooks';
 import CurrencyInputPanel from 'components/v3/CurrencyInputPanel';
 import { ETHER, JSBI } from '@uniswap/sdk';
-import { formatUnits, parseUnits } from 'ethers/lib/utils';
+import { formatUnits, parseUnits } from 'ethers';
+import { BigNumber } from '@ethersproject/bignumber';
 import { useWETHContract } from 'hooks/useContract';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
 import { WrappedCurrency } from 'models/types';
@@ -28,7 +29,6 @@ import {
   useICHIVaultApproval,
   useICHIVaultDepositData,
 } from 'hooks/useICHIData';
-import { BigNumber } from 'ethers';
 
 interface IncreaseICHILiquidityModalProps {
   open: boolean;
@@ -61,10 +61,7 @@ export default function IncreaseICHILiquidityModal({
   );
 
   const typedValueJSBI = JSBI.BigInt(
-    parseUnits(
-      !typedValue ? '0' : getFixedValue(typedValue, position.token0?.decimals),
-      position.token0?.decimals,
-    ),
+    !typedValue ? '0' : getFixedValue(typedValue, position.token0?.decimals),
   );
 
   const [showConfirm, setShowConfirm] = useState(false);
@@ -188,8 +185,9 @@ export default function IncreaseICHILiquidityModal({
       const err = error as CustomError;
       console.error('Failed to send transaction', error);
       setApproving(false);
-      const errorMessage = (err?.code === 4001 ? t('txRejected') : t('errorInTx')) || '';
-    setAddErrorMessage(errorMessage);
+      const errorMessage =
+        (err?.code === 4001 ? t('txRejected') : t('errorInTx')) || '';
+      setAddErrorMessage(errorMessage);
     }
   };
 

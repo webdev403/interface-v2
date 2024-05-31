@@ -7,7 +7,7 @@ import { FiatValue } from '../CurrencyInputPanel/FiatValue';
 import { AdvancedSwapDetails } from './AdvancedSwapDetails';
 import TradePrice from '../swap/TradePrice';
 import { useUSDCValue } from 'hooks/v3/useUSDCPrice';
-import { isAddress } from 'ethers/lib/utils';
+import { isAddress } from 'ethers';
 import { shortenAddress } from 'utils';
 import CurrencyLogo from 'components/CurrencyLogo';
 import { computeFiatValuePriceImpact } from 'utils/v3/computeFiatValuePriceImpact';

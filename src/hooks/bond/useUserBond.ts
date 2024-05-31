@@ -7,13 +7,13 @@ import {
   useMultipleContractsMultipleData,
   useMultipleContractSingleData,
 } from 'state/multicall/v3/hooks';
-import { Interface } from 'ethers/lib/utils';
+import { Interface } from 'ethers';
 import { useMemo } from 'react';
 import { useBondContracts } from 'hooks/useContract';
 import { getBondNftBatchData } from './getBondNftData';
 import { useQuery } from '@tanstack/react-query';
 import { ChainId } from '@uniswap/sdk';
-import { BigNumber } from 'ethers';
+import { BigNumber } from '@ethersproject/bignumber';
 
 export const useUserOwnedBonds = (bonds: Bond[]) => {
   const { chainId, account } = useActiveWeb3React();

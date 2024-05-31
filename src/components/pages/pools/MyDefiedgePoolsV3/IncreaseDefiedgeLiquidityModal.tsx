@@ -6,7 +6,7 @@ import {
   TransactionConfirmationModal,
   TransactionErrorContent,
 } from 'components';
-import { Box, Button } from '@mui/material';
+import { Box, Button, CircularProgress } from '@mui/material';
 import { Close } from '@mui/icons-material';
 import { useTranslation } from 'next-i18next';
 import { calculateGasMargin, formatNumber, getFixedValue } from 'utils';
@@ -18,7 +18,7 @@ import {
 import CurrencyInputPanel from 'components/v3/CurrencyInputPanel';
 import { useTokenBalance } from 'state/wallet/v3/hooks';
 import { ETHER, JSBI, WETH } from '@uniswap/sdk';
-import { formatUnits, parseUnits } from 'ethers/lib/utils';
+import { formatUnits, parseUnits } from 'ethers';
 import {
   useDefiedgeStrategyContract,
   useWETHContract,
@@ -32,7 +32,6 @@ import {
 import styles from 'styles/pages/pools/AutomaticLPItemDetails.module.scss';
 import { ApprovalState, useApproveCallback } from 'hooks/useV3ApproveCallback';
 import { tryParseAmount } from 'state/swap/v3/hooks';
-import { CircularProgress } from '@mui/material';
 import { Check } from '@mui/icons-material';
 
 interface IncreaseDefiedgeLiquidityModalProps {
@@ -522,7 +521,7 @@ export default function IncreaseDefiedgeLiquidityModal({
               {showApprovalA ? (
                 approvalA === ApprovalState.PENDING ? (
                   <Box className='token-approve-button-loading'>
-                    <CircularProgress size="16px" />
+                    <CircularProgress size={16} />
                     <p>
                       {t('approving')} {position.token0?.symbol}
                     </p>
@@ -552,7 +551,7 @@ export default function IncreaseDefiedgeLiquidityModal({
               {showApprovalB ? (
                 approvalB === ApprovalState.PENDING ? (
                   <Box className='token-approve-button-loading'>
-                 <CircularProgress size="16px" />
+                    <CircularProgress size={16} />
                     <p>
                       {t('approving')} {position.token1?.symbol}
                     </p>

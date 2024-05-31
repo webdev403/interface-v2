@@ -1,6 +1,6 @@
 import { Contract } from '@ethersproject/contracts';
 import { Provider } from '@ethersproject/providers';
-import { namehash } from 'ethers/lib/utils';
+import { namehash } from 'ethers';
 
 const REGISTRAR_ABI = [
   {

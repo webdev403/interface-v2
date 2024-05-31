@@ -2,7 +2,7 @@ import React, { useState, useMemo, useCallback } from 'react';
 import { Contract } from '@ethersproject/contracts';
 import { ArrowLeft, ArrowDown } from 'react-feather';
 import { Box, Button } from '@mui/material';
-import {  Currency, JSBI, Percent } from '@uniswap/sdk';
+import { ChainId, Currency, ETHER, JSBI, Percent } from '@uniswap/sdk';
 import { event } from 'nextjs-google-analytics';
 import { BigNumber } from '@ethersproject/bignumber';
 import { TransactionResponse } from '@ethersproject/providers';
@@ -79,7 +79,8 @@ const RemoveLiquidityModal: React.FC<RemoveLiquidityModalProps> = ({
     ],
     [currency0, currency1, chainId],
   );
-
+  const chainIdToUse = chainId ? chainId : ChainId.MATIC;
+  const nativeCurrency = ETHER[chainIdToUse];
   const { independentField, typedValue } = useBurnState();
   const { pair, parsedAmounts, error } = useDerivedBurnInfo(
     currency0,
@@ -238,6 +239,8 @@ const RemoveLiquidityModal: React.FC<RemoveLiquidityModalProps> = ({
       throw new Error(t('noLiquidity') ?? undefined);
     }
 
+    const currencyBIsETH = currency1 === nativeCurrency;
+    const oneCurrencyIsETH = currency0 === nativeCurrency || currencyBIsETH;
 
     if (!tokenA || !tokenB) {
       setRemoveErrorMessage(t('cannotWrap') ?? '');

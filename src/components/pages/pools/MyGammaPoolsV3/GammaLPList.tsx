@@ -4,7 +4,7 @@ import { useActiveWeb3React } from 'hooks';
 import { getAllGammaPairs, getTokenFromAddress } from 'utils';
 import { useSelectedTokenList } from 'state/lists/hooks';
 import GammaLPItem from './GammaLPItem';
-import { formatUnits } from 'ethers/lib/utils';
+import { formatUnits } from 'ethers';
 
 const GammaLPList: React.FC<{
   gammaPositions: any[];

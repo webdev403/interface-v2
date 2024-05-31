@@ -21,7 +21,7 @@ import {
   NativeCurrency,
 } from '@uniswap/sdk-core';
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
-import { formatUnits, parseUnits } from 'ethers/lib/utils';
+import { formatUnits, parseUnits } from 'ethers';
 import { AddressZero } from '@ethersproject/constants';
 import {
   GammaPair,

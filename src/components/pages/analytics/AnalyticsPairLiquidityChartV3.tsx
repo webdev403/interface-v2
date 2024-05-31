@@ -2,7 +2,7 @@ import { JSBI } from '@uniswap/sdk';
 import { CurrencyAmount, Token } from '@uniswap/sdk-core';
 import { Pool } from 'v3lib/entities/pool';
 import { TickMath } from 'v3lib/utils/tickMath';
-import { BigNumber } from 'ethers';
+import { BigNumber } from '@ethersproject/bignumber';
 import React, { useCallback, useMemo, useState } from 'react';
 import { isAddress } from 'utils';
 import dynamic from 'next/dynamic';

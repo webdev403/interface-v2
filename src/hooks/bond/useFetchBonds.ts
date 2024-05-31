@@ -6,7 +6,7 @@ import {
   useMultipleContractSingleData,
   useSingleContractMultipleData,
 } from 'state/multicall/v3/hooks';
-import { Interface, formatUnits } from 'ethers/lib/utils';
+import { Interface, formatUnits } from 'ethers';
 import {
   V2_FACTORY_ADDRESSES,
   V2_FACTORY_BOND,

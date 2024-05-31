@@ -1,6 +1,6 @@
 import { ChainId } from '@uniswap/sdk';
 import { getConfig } from 'config/index';
-import { formatUnits } from 'ethers/lib/utils';
+import { formatUnits } from 'ethers';
 import { getTokenFromAddress } from 'utils';
 import { useUSDCPricesFromAddresses } from 'utils/useUSDCPrice';
 import { useActiveWeb3React } from 'hooks';

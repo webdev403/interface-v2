@@ -10,7 +10,7 @@ import { ApprovalState, useApproveCallback } from 'hooks/useV3ApproveCallback';
 import { CurrencyLogo } from 'components';
 import { useGammaUNIProxyContract, useWETHContract } from 'hooks/useContract';
 import { useSingleContractMultipleData } from 'state/multicall/v3/hooks';
-import { formatUnits, parseUnits } from 'ethers/lib/utils';
+import { formatUnits, parseUnits } from 'ethers';
 import { formatCurrencyAmount } from 'utils/v3/formatCurrencyAmount';
 import { useCurrencyBalance } from 'state/wallet/hooks';
 import { TransactionResponse } from '@ethersproject/abstract-provider';

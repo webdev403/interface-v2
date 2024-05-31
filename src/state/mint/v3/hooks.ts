@@ -44,7 +44,7 @@ import { useCurrencyBalance, useTokenBalance } from 'state/wallet/hooks';
 import { tryParseAmount } from 'state/swap/v3/hooks';
 import { IPresetArgs } from 'components/pages/pools/SupplyLiquidityV3/components/PresetRanges';
 import { GlobalConst, UnipilotVaults } from 'constants/index';
-import { Interface, formatUnits, parseUnits } from 'ethers/lib/utils';
+import { Interface, formatUnits, parseUnits } from 'ethers';
 import {
   useContract,
   useGammaUNIProxyContract,

@@ -16,7 +16,7 @@ import BondTypeWarningModal from '../BondTypeWarningModal';
 import { CurrencyAmount } from '@uniswap/sdk-core';
 import { useCurrency } from 'hooks/v3/Tokens';
 import { JSBI } from '@uniswap/sdk';
-import { parseUnits } from 'ethers/lib/utils';
+import { parseUnits } from 'ethers';
 import DisplayValues from '../DisplayValues';
 import GetLPButton from '../GetLPButton';
 import { useTranslation } from 'next-i18next';

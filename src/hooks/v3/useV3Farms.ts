@@ -30,7 +30,7 @@ import {
   useSingleCallResult,
   useSingleContractMultipleData,
 } from 'state/multicall/v3/hooks';
-import { Result, formatUnits } from 'ethers/lib/utils';
+import { Result, formatUnits } from 'ethers';
 import { V3Farm } from 'components/pages/farms/V3/Farms';
 import { useGammaData, useGammaRewards } from './useGammaData';
 import { useActiveWeb3React } from 'hooks';
@@ -43,7 +43,7 @@ import {
   useEternalFarmTvls,
 } from 'hooks/useIncentiveSubgraph';
 import { useV3PositionsFromTokenIds } from './useV3Positions';
-import { BigNumber } from 'ethers';
+import { BigNumber } from '@ethersproject/bignumber';
 import { useLastTransactionHash } from 'state/transactions/hooks';
 import { FeeAmount } from 'v3lib/utils';
 import { getConfig } from 'config/index';

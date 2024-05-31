@@ -1,11 +1,10 @@
 import React, { useMemo } from 'react';
-import { Box, Button } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import { Box, Button, Skeleton } from '@mui/material';
 import { useGetMerklFarms } from 'hooks/v3/useV3Farms';
 import { useUSDCPricesFromAddresses } from 'utils/useUSDCPrice';
 import { formatNumber, getTokenFromAddress } from 'utils';
 import { useClaimMerklRewards } from 'hooks/useClaimMerklRewards';
-import { Skeleton } from '@mui/material';
 import { CurrencyLogo, CustomTooltip } from 'components';
 import { useSelectedTokenList } from 'state/lists/hooks';
 import { useActiveWeb3React } from 'hooks';
@@ -67,7 +66,7 @@ export const MerklClaimAll: React.FC = () => {
 
   return (
     <Box className='claimAllBox'>
-      <img src={"assets/images/claimAllBg.png"} width='100%' />
+      <img src={'assets/images/claimAllBg.png'} width='100%' />
       <Box className='flex flex-col' gap={8}>
         <p>{t('myrewards')}</p>
         {loadingRewardTokenPrices || loadingFarms ? (

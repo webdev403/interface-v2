@@ -5,8 +5,8 @@ import {
   useTransactionFinalizer,
 } from 'state/transactions/hooks';
 import { useTranslation } from 'next-i18next';
-import { BigNumber } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
+import { BigNumber } from '@ethersproject/bignumber';
+import { parseUnits } from 'ethers';
 import { TransactionResponse } from '@ethersproject/providers';
 import { useActiveWeb3React } from 'hooks';
 import { getFixedValue } from 'utils';

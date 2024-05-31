@@ -1,5 +1,5 @@
 import { ChainId } from '@uniswap/sdk';
-import { Store } from 'redux';
+import { createStore, Store } from 'redux';
 import {
   addPopup,
   ApplicationModal,
@@ -7,7 +7,7 @@ import {
   setOpenModal,
   updateBlockNumber,
 } from './actions';
-import { ApplicationState } from './reducer';
+import reducer, { ApplicationState } from './reducer';
 
 describe('application reducer', () => {
   let store: Store<ApplicationState>;

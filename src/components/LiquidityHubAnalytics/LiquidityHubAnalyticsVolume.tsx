@@ -1,7 +1,6 @@
 import React from 'react';
-import Box from '@mui/material/Box';
+import { Box, Skeleton } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import Skeleton from '@mui/material/Skeleton';
 import { formatNumber } from 'utils';
 import dayjs from 'dayjs';
 import { useLHAnalyticsDaily } from 'hooks/useLHAnalytics';

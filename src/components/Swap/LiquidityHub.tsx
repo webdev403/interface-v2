@@ -28,12 +28,13 @@ import { Field } from 'state/swap/actions';
 import { Currency as CoreCurrency, Percent } from '@uniswap/sdk-core';
 import { ZERO_ADDRESS } from 'constants/v3/misc';
 import { wrappedCurrency } from 'utils/wrappedCurrency';
-import { parseUnits, _TypedDataEncoder } from 'ethers/lib/utils';
+import { parseUnits, _TypedDataEncoder } from 'ethers';
 import { getFixedValue } from 'utils';
 import { useRouter } from 'next/router';
 import OrbsLogo from 'svgs/orbs-logo.svg';
 
 const ANALYTICS_VERSION = 0.2;
+const API_ENDPOINT = 'https://hub.orbs.network';
 const WEBSITE = 'https://www.orbs.com';
 const BI_ENDPOINT = `https://bi.orbs.network/putes/liquidity-hub-ui-${ANALYTICS_VERSION}`;
 const DEX_PRICE_BETTER_ERROR = 'Dex trade is better than Clob trade';

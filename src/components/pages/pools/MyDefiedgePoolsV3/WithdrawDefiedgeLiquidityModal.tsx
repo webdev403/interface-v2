@@ -13,7 +13,7 @@ import { Close } from '@mui/icons-material';
 import { useTranslation } from 'next-i18next';
 import useDebouncedChangeHandler from 'utils/useDebouncedChangeHandler';
 import { calculateGasMargin, formatNumber } from 'utils';
-import { BigNumber } from 'ethers';
+import { BigNumber } from '@ethersproject/bignumber';
 import { useDefiedgeStrategyContract } from 'hooks/useContract';
 import { useActiveWeb3React } from 'hooks';
 import {
@@ -23,7 +23,7 @@ import {
 import { TransactionResponse } from '@ethersproject/abstract-provider';
 import { Token } from '@uniswap/sdk';
 import { useTokenBalance } from 'state/wallet/hooks';
-import { formatUnits } from 'ethers/lib/utils';
+import { formatUnits } from 'ethers';
 import styles from 'styles/components/v3/RemoveLiquidityV3.module.scss';
 
 interface WithdrawDefiedgeLiquidityModalProps {

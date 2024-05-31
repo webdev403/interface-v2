@@ -11,6 +11,7 @@ import { getAllGammaPairs } from 'utils';
 import { useActiveWeb3React } from 'hooks';
 import { useRouter } from 'next/router';
 import { Home, KeyboardArrowRight } from '@mui/icons-material';
+import { useHistory } from 'react-router-dom';
 import {
   useEternalFarmsFiltered,
   useGammaFarmsFiltered,
@@ -50,6 +51,7 @@ const AllV3Farms: React.FC<Props> = ({ searchValue, farmStatus }) => {
   const { chainId } = useActiveWeb3React();
   const isMobile = useMediaQuery(breakpoints.down('sm'));
   const router = useRouter();
+  const history = useHistory();
   const config = getConfig(chainId);
   const qsAvailable = config['farm']['quickswap'];
 

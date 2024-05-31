@@ -19,7 +19,7 @@ import {
 } from 'state/transactions/hooks';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
 import { ETHER } from '@uniswap/sdk';
-import { formatUnits } from 'ethers/lib/utils';
+import { formatUnits } from 'ethers';
 import { useWETHContract } from 'hooks/useContract';
 import { calculateGasMargin, formatNumber } from 'utils';
 import {

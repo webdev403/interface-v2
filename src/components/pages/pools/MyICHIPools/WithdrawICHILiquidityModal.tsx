@@ -19,10 +19,10 @@ import {
   useTransactionFinalizer,
 } from 'state/transactions/hooks';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
+import { BigNumber } from '@ethersproject/bignumber';
 import { JSBI } from '@uniswap/sdk';
 import { ICHIVault } from 'hooks/useICHIData';
 import { SupportedDex, withdraw } from '@ichidao/ichi-vaults-sdk';
-import { BigNumber } from 'ethers';
 import styles from 'styles/components/v3/RemoveLiquidityV3.module.scss';
 
 interface WithdrawICHILiquidityModalProps {

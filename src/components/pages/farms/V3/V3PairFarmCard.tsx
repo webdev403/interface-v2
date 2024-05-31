@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { Box, Button, useMediaQuery, useTheme } from '@mui/material';
+import {
+  Box,
+  Button,
+  useMediaQuery,
+  useTheme,
+  CircularProgress,
+} from '@mui/material';
 import { CustomModal, DoubleCurrencyLogo } from 'components';
 import { formatNumber } from 'utils';
 import { useTranslation } from 'next-i18next';
@@ -12,7 +18,6 @@ import { FarmModal } from 'components/StakeModal';
 import { FarmingType } from 'models/enums';
 import styles from 'styles/pages/Farm.module.scss';
 import Image from 'next/image';
-import Loader from '@orbs-network/twap-ui/dist/components/base/Loader';
 
 interface Props {
   farm: V3Farm;
@@ -105,7 +110,7 @@ export const V3PairFarmCard: React.FC<Props> = ({ farm }) => {
               <p className='small text-secondary'>{t('tvl')}</p>
               {farm.loading ? (
                 <Box mt='4px'>
-                  <Loader />
+                  <CircularProgress size={16} />
                 </Box>
               ) : (
                 <p className='small'>${formatNumber(farm.tvl)}</p>

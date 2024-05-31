@@ -15,7 +15,7 @@ import GammaPairABI from 'constants/abis/gamma-hypervisor.json';
 import styles from 'styles/pages/pools/PresetRanges.module.scss';
 import PoolABI from 'constants/abis/v3/pool.json';
 import { useActiveWeb3React } from 'hooks';
-import { Interface } from 'ethers/lib/utils';
+import { Interface } from 'ethers';
 import { useTranslation } from 'next-i18next';
 import { useMultipleContractSingleData } from 'state/multicall/hooks';
 import { GlobalConst, unipilotVaultTypes } from 'constants/index';

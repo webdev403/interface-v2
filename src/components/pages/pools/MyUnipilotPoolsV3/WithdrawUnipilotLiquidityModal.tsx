@@ -21,7 +21,7 @@ import {
 } from 'state/transactions/hooks';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
 import { JSBI } from '@uniswap/sdk';
-import { formatUnits } from 'ethers/lib/utils';
+import { formatUnits } from 'ethers';
 import { useUniPilotVaultContract } from 'hooks/useContract';
 import { UnipilotPosition } from 'hooks/v3/useV3Positions';
 

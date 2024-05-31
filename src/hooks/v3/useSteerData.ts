@@ -12,8 +12,8 @@ import {
   useSingleCallResult,
   useSingleContractMultipleData,
 } from 'state/multicall/v3/hooks';
-import { Interface, formatUnits } from 'ethers/lib/utils';
-import { BigNumber } from 'ethers';
+import { Interface, formatUnits } from 'ethers';
+import { BigNumber } from '@ethersproject/bignumber';
 import { useSelectedTokenList } from 'state/lists/hooks';
 import {
   calculatePositionWidth,
@@ -99,7 +99,7 @@ export const useSteerVaults = (chainId: ChainId) => {
                   (item: any) => item.vaultAddress === vault.vaultAddress,
                 ),
             );
-       
+            let aprData, strategyData;
             try {
               const aprRes = await fetch(
                 `${steerAPIURL}/pool/fee-apr?address=${vault.vaultAddress}&chain=${chainId}&interval=604800`,
@@ -109,6 +109,10 @@ export const useSteerVaults = (chainId: ChainId) => {
               console.log('Error getting steer vault APR ', e);
             }
             try {
+              const strategyRes = await fetch(
+                `https://ipfs.io/ipfs/${vault.strategyIpfsHash}`,
+              );
+              strategyData = await strategyRes.json();
             } catch (e) {
               console.log('Error getting steer vault strategy data ', e);
             }

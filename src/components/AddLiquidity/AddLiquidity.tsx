@@ -7,6 +7,10 @@ import {
   ConfirmationModalContent,
   DoubleCurrencyLogo,
 } from 'components';
+import {
+  useOpenNetworkSelection,
+  useWalletModalToggle,
+} from 'state/application/hooks';
 import { TransactionResponse } from '@ethersproject/providers';
 import { BigNumber } from '@ethersproject/bignumber';
 import { event } from 'nextjs-google-analytics';
@@ -162,6 +166,8 @@ const AddLiquidity: React.FC<{
       : parsedAmounts[dependentField]?.toExact() ?? '',
   };
 
+  const toggleWalletModal = useWalletModalToggle();
+  const { setOpenNetworkSelection } = useOpenNetworkSelection();
   const [approvingA, setApprovingA] = useState(false);
   const [approvingB, setApprovingB] = useState(false);
   const [approvalA, approveACallback] = useApproveCallback(

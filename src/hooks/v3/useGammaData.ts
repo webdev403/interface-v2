@@ -5,7 +5,7 @@ import { useContract } from 'hooks/useContract';
 import { useLastTransactionHash } from 'state/transactions/hooks';
 import GammaPairABI from 'constants/abis/gamma-hypervisor.json';
 import { useSingleCallResult } from 'state/multicall/v3/hooks';
-import { formatUnits } from 'ethers/lib/utils';
+import { formatUnits } from 'ethers';
 import { useEffect } from 'react';
 
 const gammaChainName = (chainId?: ChainId) => {

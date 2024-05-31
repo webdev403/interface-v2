@@ -14,7 +14,7 @@ import { useTranslation } from 'next-i18next';
 import useDebouncedChangeHandler from 'utils/useDebouncedChangeHandler';
 import styles from 'styles/components/v3/RemoveLiquidityV3.module.scss';
 import { calculateGasMargin, formatNumber } from 'utils';
-import { BigNumber } from 'ethers';
+import { BigNumber } from '@ethersproject/bignumber';
 import GammaHyperVisorABI from 'constants/abis/gamma-hypervisor.json';
 import { useContract } from 'hooks/useContract';
 import { useActiveWeb3React } from 'hooks';

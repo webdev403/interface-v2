@@ -7,7 +7,7 @@ import { CurrencyLogo } from 'components';
 import IncreaseSteerLiquidityModal from './IncreaseSteerLiquidityModal';
 import WithdrawSteerLiquidityModal from './WithdrawSteerLiquidityModal';
 import { useTokenBalance } from 'state/wallet/v3/hooks';
-import { formatUnits } from 'ethers/lib/utils';
+import { formatUnits } from 'ethers';
 import { SteerVault, useSteerStakedPools } from 'hooks/v3/useSteerData';
 import { useTotalSupply } from 'hooks/v3/useTotalSupply';
 import { Token } from '@uniswap/sdk-core';

@@ -8,7 +8,7 @@ import { CustomModal } from 'components';
 import BondTokenDisplay from './BondTokenDisplay';
 import { Box, Grid } from '@mui/material';
 import { Close, ReportProblemOutlined, Check } from '@mui/icons-material';
-import { formatUnits } from 'ethers/lib/utils';
+import { formatUnits } from 'ethers';
 import { formatNumber } from 'utils';
 import styles from 'styles/pages/Bonds.module.scss';
 

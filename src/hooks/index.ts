@@ -36,8 +36,8 @@ import { SUPPORTED_CHAINIDS } from 'constants/index';
 import { Connector } from '@web3-react/types';
 import { useMasaAnalyticsReact } from '@masa-finance/analytics-react';
 import { Currency } from '@uniswap/sdk-core';
-import { BigNumber } from 'ethers';
-import { formatUnits } from 'ethers/lib/utils';
+import { BigNumber } from '@ethersproject/bignumber';
+import { formatUnits } from 'ethers';
 import {
   useOpenNetworkSelection,
   useWalletModalToggle,

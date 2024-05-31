@@ -1,7 +1,7 @@
 import NON_FUN_POS_MAN from 'abis/non-fun-pos-man.json';
 import FARMING_CENTER_ABI from 'abis/farming-center.json';
 import { Contract } from 'ethers';
-import { Interface } from 'ethers/lib/utils';
+import { Interface } from 'ethers';
 import { useCallback } from 'react';
 import {
   FARMING_CENTER,

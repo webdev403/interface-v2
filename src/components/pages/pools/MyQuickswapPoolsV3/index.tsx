@@ -1,12 +1,11 @@
 import React, { useMemo } from 'react';
-import { Box, Button } from '@mui/material';
+import { Box, Button, CircularProgress } from '@mui/material';
 import { useV3Positions } from 'hooks/v3/useV3Positions';
 import { useActiveWeb3React } from 'hooks';
-import { CircularProgress } from '@mui/material';
-import PositionList from './PositionList';
 import { PositionPool } from 'models/interfaces';
 import { useWalletModalToggle } from 'state/application/hooks';
 import { useTranslation } from 'next-i18next';
+import PositionList from './PositionList';
 
 const MyQuickswapPoolsV3: React.FC<{
   hideFarmingPositions: boolean;
@@ -19,7 +18,6 @@ const MyQuickswapPoolsV3: React.FC<{
     userHideClosedPositions,
     hideFarmingPositions,
   );
-
 
   const [openPositions, closedPositions] = positions?.reduce<
     [PositionPool[], PositionPool[]]
@@ -68,7 +66,7 @@ const MyQuickswapPoolsV3: React.FC<{
       <Box mt={2}>
         {positionsLoading ? (
           <Box className='flex justify-center'>
-            <CircularProgress size={'2rem'} />
+            <CircularProgress size={32} />
           </Box>
         ) : filteredPositions && filteredPositions.length > 0 ? (
           <PositionList

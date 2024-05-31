@@ -2,7 +2,7 @@ import { useActiveWeb3React } from 'hooks';
 import React from 'react';
 import { useTranslation } from 'next-i18next';
 import { Box } from '@mui/material';
-import { formatUnits } from 'ethers/lib/utils';
+import { formatUnits } from 'ethers';
 
 const DisplayValues = ({
   bond,

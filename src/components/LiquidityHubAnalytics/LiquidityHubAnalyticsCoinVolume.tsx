@@ -1,12 +1,11 @@
 import React, { useMemo, useState } from 'react';
-import { Box } from '@mui/material';
+import { Box, Skeleton } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import Chart from 'react-apexcharts';
 import { formatCompact } from 'utils';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import { useLHAnalytics } from 'hooks/useLHAnalytics';
-import { Skeleton } from '@mui/material';
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
 dayjs.extend(utc);
 
@@ -87,7 +86,7 @@ const LiquidityHubAnalyticsCoinVolume: React.FC = () => {
 
   return (
     <>
-      <Box className='flex justify-between items-center flex-wrap' component={'div'} gap={8}>
+      <Box className='flex justify-between items-center flex-wrap' gap={8}>
         <p>{t('volumebycoin')}</p>
         <Box className='flex'>
           <Box

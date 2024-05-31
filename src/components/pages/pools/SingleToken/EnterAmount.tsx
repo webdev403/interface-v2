@@ -1,7 +1,7 @@
 import { Box } from '@mui/material';
 import { ETHER, WETH } from '@uniswap/sdk';
 import { CurrencyLogo, DoubleCurrencyLogo, NumericalInput } from 'components';
-import { formatUnits } from 'ethers/lib/utils';
+import { formatUnits } from 'ethers';
 import { useActiveWeb3React } from 'hooks';
 import { useICHIVaultDepositData } from 'hooks/useICHIData';
 import React from 'react';

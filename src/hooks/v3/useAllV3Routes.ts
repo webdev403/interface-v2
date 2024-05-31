@@ -5,6 +5,7 @@ import { Route } from 'v3lib/entities/route';
 import { useMemo } from 'react';
 import { useV3SwapPools } from './useV3SwapPools';
 import { useUserSingleHopOnly } from 'state/user/hooks';
+import { ChainId } from '@uniswap/sdk';
 import { getConfig } from 'config/index';
 
 /**

@@ -5,7 +5,7 @@ import { useSelectedTokenList } from 'state/lists/hooks';
 import { useMultipleContractSingleData } from 'state/multicall/v3/hooks';
 import { getFixedValue, getTokenFromAddress } from 'utils';
 import ICHIVaultABI from 'constants/abis/ichi-vault.json';
-import { Interface, formatUnits, parseUnits } from 'ethers/lib/utils';
+import { Interface, formatUnits, parseUnits } from 'ethers';
 import { useEffect, useMemo } from 'react';
 import {
   SupportedDex,
@@ -23,7 +23,7 @@ import { Currency, Token } from '@uniswap/sdk-core';
 import { useCurrencyBalance } from 'state/wallet/hooks';
 import { useLastTransactionHash } from 'state/transactions/hooks';
 import { toV3Token } from 'constants/v3/addresses';
-import { BigNumber } from 'ethers';
+import { BigNumber } from '@ethersproject/bignumber';
 
 export interface ICHIVault {
   allowToken0?: boolean;

@@ -60,8 +60,8 @@ function Updaters() {
       <MultiCallV3Updater />
       <UserUpdater />
       <FarmUpdater />
-      {/* <CNTFarmUpdater />
-      <DualFarmUpdater /> */}
+      {/* <CNTFarmUpdater /> */}
+      {/* <DualFarmUpdater /> */}
       <SyrupUpdater />
     </>
   );

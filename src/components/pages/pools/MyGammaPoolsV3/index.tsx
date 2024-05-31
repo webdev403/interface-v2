@@ -11,7 +11,7 @@ import {
   useMultipleContractSingleData,
 } from 'state/multicall/v3/hooks';
 import GammaPairABI from 'constants/abis/gamma-hypervisor.json';
-import { formatUnits, Interface } from 'ethers/lib/utils';
+import { formatUnits, Interface } from 'ethers';
 import { useGammaData } from 'hooks/v3/useGammaData';
 
 export default function MyGammaPoolsV3() {

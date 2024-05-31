@@ -55,7 +55,7 @@ import { useInverter } from 'hooks/v3/useInverter';
 import { GlobalConst } from 'constants/index';
 import { useTranslation } from 'next-i18next';
 import { useCurrencyBalance } from 'state/wallet/hooks';
-import { formatUnits } from 'ethers/lib/utils';
+import { formatUnits } from 'ethers';
 import { Presets } from 'state/mint/v3/reducer';
 
 interface IAddLiquidityButton {

@@ -20,7 +20,7 @@ import AnalyticsHeader from 'components/pages/analytics/AnalyticsHeader';
 import AnalyticsTokenChart from 'components/pages/analytics/AnalyticsTokenChart';
 import { useTranslation } from 'next-i18next';
 import { useSelectedTokenList } from 'state/lists/hooks';
-import { getAddress } from 'ethers/lib/utils';
+import { getAddress } from 'ethers';
 import { useRouter } from 'next/router';
 import { getConfig } from 'config/index';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';

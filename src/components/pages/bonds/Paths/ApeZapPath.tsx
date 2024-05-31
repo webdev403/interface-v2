@@ -17,7 +17,7 @@ import { useCurrencyBalance } from 'state/wallet/hooks';
 import { PurchasePath } from 'types/bond';
 import { JSBI } from '@uniswap/sdk';
 import { CurrencyAmount } from '@uniswap/sdk-core';
-import { parseUnits } from 'ethers/lib/utils';
+import { parseUnits } from 'ethers';
 import { V3TradeState } from 'hooks/v3/useBestV3Trade';
 import WarningModal from '../WarningModal';
 import DisplayValues from '../DisplayValues';
@@ -74,12 +74,7 @@ const ApeZapPath = ({
   const parsedAmount = inputCurrency
     ? CurrencyAmount.fromRawAmount(
         inputCurrency,
-        JSBI.BigInt(
-          parseUnits(
-            getFixedValue(typedValue, inputCurrency?.decimals),
-            inputCurrency?.decimals,
-          ),
-        ),
+        JSBI.BigInt(getFixedValue(typedValue, inputCurrency?.decimals)),
       )
     : undefined;
   const [approvalState, approveCallback] = useApproveCallbackV3(

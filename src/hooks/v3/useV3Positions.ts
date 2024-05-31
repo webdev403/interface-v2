@@ -4,7 +4,7 @@ import {
   useSingleCallResult,
   useSingleContractMultipleData,
 } from 'state/multicall/v3/hooks';
-import {  useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { BigNumber } from '@ethersproject/bignumber';
 import { useActiveWeb3React } from 'hooks';
 import {
@@ -22,7 +22,7 @@ import {
   getTokenFromAddress,
 } from 'utils';
 import { useQuery } from '@tanstack/react-query';
-import { Interface, formatUnits } from 'ethers/lib/utils';
+import { Interface, formatUnits } from 'ethers';
 import UNIPILOT_VAULT_ABI from 'constants/abis/unipilot-vault.json';
 import UNIPILOT_SINGLE_REWARD_ABI from 'constants/abis/unipilot-single-reward.json';
 import UNIPILOT_DUAL_REWARD_ABI from 'constants/abis/unipilot-dual-reward.json';
@@ -31,7 +31,7 @@ import GammaPairABI from 'constants/abis/gamma-hypervisor.json';
 import DEFIEDGE_STRATEGY_ABI from 'constants/abis/defiedge-strategy.json';
 import { useSteerStakedPools, useSteerVaults } from './useSteerData';
 import { Token } from '@uniswap/sdk-core';
-import { UnipilotVaults } from 'constants/index';
+import { UnipilotVaults, subgraphNotReadyChains } from 'constants/index';
 import { useUnipilotFarms } from './useUnipilotFarms';
 import { useTokenBalances } from 'state/wallet/v3/hooks';
 import {
@@ -41,6 +41,7 @@ import {
 } from 'hooks/useICHIData';
 import { useSelectedTokenList } from 'state/lists/hooks';
 import { toV3Token } from 'constants/v3/addresses';
+import { useLastTransactionHash } from 'state/transactions/hooks';
 
 interface UseV3PositionsResults {
   loading: boolean;

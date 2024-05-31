@@ -1,6 +1,6 @@
 import { parseBytes32String } from '@ethersproject/strings';
 import { Token } from '@uniswap/sdk-core';
-import { arrayify } from 'ethers/lib/utils';
+import { arrayify } from 'ethers';
 import { useMemo } from 'react';
 import { NEVER_RELOAD, useSingleCallResult } from '../state/multicall/v3/hooks';
 import { isAddress } from '../utils';

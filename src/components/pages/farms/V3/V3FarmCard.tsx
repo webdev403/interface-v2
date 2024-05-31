@@ -1,5 +1,11 @@
 import React from 'react';
-import { Box, Button, useMediaQuery, useTheme } from '@mui/material';
+import {
+  Box,
+  Button,
+  CircularProgress,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
 import { DoubleCurrencyLogo } from 'components';
 import { formatNumber } from 'utils';
 import { useTranslation } from 'next-i18next';
@@ -8,7 +14,6 @@ import { useRouter } from 'next/router';
 import { V3FarmPair } from './AllV3Farms';
 import styles from 'styles/pages/Farm.module.scss';
 import Image from 'next/image';
-import Loader from '@orbs-network/twap-ui/dist/components/base/Loader';
 
 interface Props {
   farm: V3FarmPair;
@@ -122,7 +127,7 @@ export const V3FarmCard: React.FC<Props> = ({ farm }) => {
           >
             {isMobile && <p>{t('tvl')}</p>}
             {farm.farms.find((item) => item.loading) ? (
-              <Loader />
+              <CircularProgress size={16} />
             ) : (
               <p>${formatNumber(farm.tvl)}</p>
             )}
@@ -147,37 +152,39 @@ export const V3FarmCard: React.FC<Props> = ({ farm }) => {
                   </Box>
                 </V3FarmAPRTooltip>
               </Box>
-            
-          </Box>
-          <Box
-            width={isMobile ? '100%' : '30%'}
-            my={rewards.length > 0 ? 2 : 0}
-            className={isMobile ? 'flex items-center justify-between' : ''}
-          >
-            {isMobile && rewards.length > 0 && <p>{t('rewards')}</p>}
-            <Box className={isMobile ? 'flex flex-col items-end' : ''}>
-              {rewards.map((reward) => (
-                <p key={reward.token.address}>
-                  {formatNumber(reward.amount)} {reward.token.symbol}{' '}
-                  <small className='text-secondary'>{t('daily')}</small>
-                </p>
-              ))}
+            </Box>
+            <Box
+              width={isMobile ? '100%' : '30%'}
+              my={rewards.length > 0 ? 2 : 0}
+              className={isMobile ? 'flex items-center justify-between' : ''}
+            >
+              {isMobile && rewards.length > 0 && <p>{t('rewards')}</p>}
+              <Box className={isMobile ? 'flex flex-col items-end' : ''}>
+                {rewards.map((reward) => (
+                  <p key={reward.token.address}>
+                    {formatNumber(reward.amount)} {reward.token.symbol}{' '}
+                    <small className='text-secondary'>{t('daily')}</small>
+                  </p>
+                ))}
+              </Box>
             </Box>
           </Box>
-        </Box>
-        <Box width={isMobile ? '100%' : '10%'} mt={rewards.length > 0 ? 0 : 2}>
-          <Button
-            className={styles.farmCardButton}
-            disabled={!farm?.token0?.address || !farm?.token1?.address}
-            onClick={() => {
-              redirectWithCurrencies(farm);
-            }}
+          <Box
+            width={isMobile ? '100%' : '10%'}
+            mt={rewards.length > 0 ? 0 : 2}
           >
-            {t('view')}
-          </Button>
+            <Button
+              className={styles.farmCardButton}
+              disabled={!farm?.token0?.address || !farm?.token1?.address}
+              onClick={() => {
+                redirectWithCurrencies(farm);
+              }}
+            >
+              {t('view')}
+            </Button>
+          </Box>
         </Box>
       </Box>
-    </Box>
     </Box>
   );
 };

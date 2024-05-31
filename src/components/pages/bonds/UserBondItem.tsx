@@ -7,7 +7,7 @@ import { formatNumber } from 'utils';
 import { useActiveWeb3React } from 'hooks';
 import { UserBond } from 'types/bond';
 import { Skeleton } from '@mui/lab';
-import { formatUnits } from 'ethers/lib/utils';
+import { formatUnits } from 'ethers';
 import VestedTimer from './VestedTimer';
 import UserBondModalView from './UserBondModalView';
 import ClaimBond from './ClaimBond';

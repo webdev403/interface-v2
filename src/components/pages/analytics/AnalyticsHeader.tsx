@@ -32,6 +32,7 @@ const AnalyticsHeader: React.FC<AnalyticHeaderProps> = ({
   const v3 = config['v3'];
   const v2 = config['v2'];
   const showAnalytics = config['analytics']['available'];
+  const lHAnalyticsAvailable = config['analytics']['liquidityHub'];
   useEffect(() => {
     if (!showAnalytics) {
       router.push('/');
@@ -51,7 +52,7 @@ const AnalyticsHeader: React.FC<AnalyticHeaderProps> = ({
 
   return (
     <Box width='100%' mb={3}>
-      <Box mb={4} className='flex items-center flex-wrap' component='div' gap={2}>
+      <Box mb={4} className='flex items-center flex-wrap' component="div" gap={2}>
         <h1 className='h4'>{t('quickswapAnalytics')}</h1>
         {v2 && v3 && !isPairDetails && <VersionToggle />}
       </Box>

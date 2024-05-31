@@ -252,36 +252,36 @@ export function useDerivedSwapInfo(): {
     inputError = `Insufficient ${amountIn.currency.symbol} balance`;
   }
 
-  const parsedQs = useParsedQueryString();
-  const swapSlippage = parsedQs?.slippage
-    ? (parsedQs?.slippage as string)
-    : undefined;
-  useEffect(() => {
-    const stableCoins = GlobalData.stableCoins[chainIdToUse];
-    const stableCoinAddresses =
-      stableCoins && stableCoins.length > 0
-        ? stableCoins.map((token) => token.address.toLowerCase())
-        : [];
-    if (!swapSlippage && !slippageManuallySet) {
-      if (
-        inputCurrencyId &&
-        outputCurrencyId &&
-        stableCoinAddresses.includes(inputCurrencyId.toLowerCase()) &&
-        stableCoinAddresses.includes(outputCurrencyId.toLowerCase())
-      ) {
-        setUserSlippageTolerance(10);
-      } else {
-        setUserSlippageTolerance(SLIPPAGE_AUTO);
-      }
-    }
-  }, [
-    inputCurrencyId,
-    outputCurrencyId,
-    setUserSlippageTolerance,
-    chainIdToUse,
-    slippageManuallySet,
-    swapSlippage,
-  ]);
+  // const parsedQs = useParsedQueryString();
+  // const swapSlippage = parsedQs?.slippage
+  //   ? (parsedQs?.slippage as string)
+  //   : undefined;
+  // useEffect(() => {
+  //   const stableCoins = GlobalData.stableCoins[chainIdToUse];
+  //   const stableCoinAddresses =
+  //     stableCoins && stableCoins.length > 0
+  //       ? stableCoins.map((token) => token.address.toLowerCase())
+  //       : [];
+  //   if (!swapSlippage && !slippageManuallySet) {
+  //     if (
+  //       inputCurrencyId &&
+  //       outputCurrencyId &&
+  //       stableCoinAddresses.includes(inputCurrencyId.toLowerCase()) &&
+  //       stableCoinAddresses.includes(outputCurrencyId.toLowerCase())
+  //     ) {
+  //       setUserSlippageTolerance(10);
+  //     } else {
+  //       setUserSlippageTolerance(SLIPPAGE_AUTO);
+  //     }
+  //   }
+  // }, [
+  //   inputCurrencyId,
+  //   outputCurrencyId,
+  //   setUserSlippageTolerance,
+  //   chainIdToUse,
+  //   slippageManuallySet,
+  //   swapSlippage,
+  // ]);
 
   return {
     currencies,

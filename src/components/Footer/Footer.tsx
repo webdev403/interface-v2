@@ -7,11 +7,11 @@ import {
   useMediaQuery,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import styles from 'styles/components/Footer.module.scss';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useSubscribeNewsletter } from 'hooks/useNewsletterSignup';
 import Image from 'next/image';
+import styles from 'styles/components/Footer.module.scss';
 import { useRouter } from 'next/router';
 const Footer: React.FC = () => {
   const router = useRouter();

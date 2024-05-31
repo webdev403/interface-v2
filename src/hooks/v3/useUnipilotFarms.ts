@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { ChainId } from '@uniswap/sdk';
-import { Interface, formatUnits } from 'ethers/lib/utils';
+import { Interface, formatUnits } from 'ethers';
 import { useMultipleContractSingleData } from 'state/multicall/v3/hooks';
 import {
   getTokenFromAddress,
@@ -8,7 +8,7 @@ import {
   getUnipilotFarms,
   getUnipilotUserFarms,
 } from 'utils';
-import { BigNumber } from 'ethers';
+import { BigNumber } from '@ethersproject/bignumber';
 import { Token } from '@uniswap/sdk';
 import UNIPILOT_SINGLE_REWARD_ABI from 'constants/abis/unipilot-single-reward.json';
 import UNIPILOT_DUAL_REWARD_ABI from 'constants/abis/unipilot-dual-reward.json';

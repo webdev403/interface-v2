@@ -13,7 +13,7 @@ import {
   useUserOwnedBondNftData,
   useUserOwnedBonds,
 } from 'hooks/bond/useUserBond';
-import { formatUnits } from 'ethers/lib/utils';
+import { formatUnits } from 'ethers';
 import { formatNumber } from 'utils';
 import styles from 'styles/pages/Bonds.module.scss';
 import Image from 'next/image';

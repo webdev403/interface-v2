@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 import { useUSDCPriceFromAddress } from 'utils/useUSDCPrice';
 import useGasPrice from './useGasPrice';
 import { wrappedCurrency } from 'utils/wrappedCurrency';
-import { formatUnits } from 'ethers/lib/utils';
+import { formatUnits } from 'ethers';
 import { OptimalRate } from '@paraswap/sdk';
 import { Percent as V2Percent } from '@uniswap/sdk';
 

@@ -1,5 +1,6 @@
 import {
   getVersionUpgrade,
+  minVersionBump,
   VersionUpgrade,
 } from '@uniswap/token-lists';
 import { useCallback, useEffect } from 'react';
@@ -8,6 +9,7 @@ import { useActiveWeb3React } from 'hooks';
 import { useFetchListCallback } from 'hooks/useFetchListCallback';
 import useInterval from 'hooks/useInterval';
 import useIsWindowVisible from 'hooks/useIsWindowVisible';
+import { addPopup } from 'state/application/actions';
 import { AppDispatch, AppState } from 'state';
 import { acceptListUpdate } from './actions';
 import { DEFAULT_LIST_OF_LISTS } from 'constants/index';

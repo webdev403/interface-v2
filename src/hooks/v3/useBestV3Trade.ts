@@ -1,6 +1,6 @@
 import { Currency, CurrencyAmount, TradeType } from '@uniswap/sdk-core';
 
-import { BigNumber } from 'ethers';
+import { BigNumber } from '@ethersproject/bignumber';
 import { useMemo } from 'react';
 import { useAllV3Routes } from './useAllV3Routes';
 import { useSingleContractMultipleData } from 'state/multicall/v3/hooks';

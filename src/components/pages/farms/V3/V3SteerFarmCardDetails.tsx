@@ -20,7 +20,7 @@ import {
   getFixedValue,
   getTokenFromAddress,
 } from 'utils';
-import { formatUnits, parseUnits } from 'ethers/lib/utils';
+import { formatUnits, parseUnits } from 'ethers';
 import {
   useTransactionAdder,
   useTransactionFinalizer,

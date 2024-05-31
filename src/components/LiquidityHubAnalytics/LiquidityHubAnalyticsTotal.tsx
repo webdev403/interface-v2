@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import Box from '@mui/material/Box';
+import { Box, Skeleton } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import Skeleton from '@mui/material/Skeleton';
 import Chart from 'react-apexcharts';
 import { formatCompact } from 'utils';
 import dayjs from 'dayjs';

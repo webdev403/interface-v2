@@ -7,8 +7,8 @@ import { useUserOwnedBonds } from 'hooks/bond/useUserBond';
 import { useTranslation } from 'next-i18next';
 import UserBondItem from './UserBondItem';
 import { useActiveWeb3React } from 'hooks';
-import { formatUnits } from 'ethers/lib/utils';
-import { BigNumber } from 'ethers';
+import { formatUnits } from 'ethers';
+import { BigNumber } from '@ethersproject/bignumber';
 import { SortColumns } from 'components';
 
 interface BondsListProps {
@@ -39,11 +39,8 @@ const BondsList: React.FC<BondsListProps> = ({ search }) => {
     return bonds
       .map((bond) => {
         const available = Number(
-          formatUnits(
-            BigNumber.from(bond?.maxTotalPayOut ?? '0').sub(
-              BigNumber.from(bond?.totalPayoutGiven ?? '0'),
-            ),
-            bond.earnToken?.decimals?.[chainId] ?? undefined,
+          BigNumber.from(bond?.maxTotalPayOut ?? '0').sub(
+            BigNumber.from(bond?.totalPayoutGiven ?? '0'),
           ),
         );
         const thresholdToShow =
@@ -57,11 +54,8 @@ const BondsList: React.FC<BondsListProps> = ({ search }) => {
       })
       .filter((bond) => {
         const available = Number(
-          formatUnits(
-            BigNumber.from(bond?.maxTotalPayOut ?? '0').sub(
-              BigNumber.from(bond?.totalPayoutGiven ?? '0'),
-            ),
-            bond.earnToken?.decimals?.[chainId] ?? undefined,
+          BigNumber.from(bond?.maxTotalPayOut ?? '0').sub(
+            BigNumber.from(bond?.totalPayoutGiven ?? '0'),
           ),
         );
         const thresholdToHide =

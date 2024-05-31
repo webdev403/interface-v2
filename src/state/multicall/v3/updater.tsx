@@ -246,7 +246,7 @@ export default function Updater(): null {
 
     cancellations.current = {
       blockNumber: latestBlockNumber,
-      cancellations: chunkedCalls.map((chunk) => {
+      cancellations: chunkedCalls.map((chunk, index) => {
         const { cancel, promise } = retry(
           () =>
             fetchChunk(multicall2Contract, chunk, latestBlockNumber, chainId),

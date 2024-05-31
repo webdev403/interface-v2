@@ -287,7 +287,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ open, onClose }) => {
         )}
         <Divider />
         <Box my={2.5} className='flex items-center justify-between'>
-          <Box className='flex items-center'component={'div'} gap={6}>
+          <Box className='flex items-center'component={"div"} gap={6}>
             <p>{t('expertMode')}</p>
             <QuestionHelper size={20} text={t('expertModeHelper')} />
           </Box>

@@ -15,7 +15,7 @@ import { useSoulZap } from 'state/application/hooks';
 import { useCurrencyBalance, useCurrencyBalances } from 'state/wallet/v3/hooks';
 import { Currency, CurrencyAmount } from '@uniswap/sdk-core';
 import { maxAmountSpend } from 'utils/v3/maxAmountSpend';
-import { formatUnits, parseUnits } from 'ethers/lib/utils';
+import { formatUnits, parseUnits } from 'ethers';
 import { JSBI } from '@uniswap/sdk';
 import { CustomModal, NumericalInput } from 'components';
 import { Box, Button, CircularProgress } from '@mui/material';
@@ -158,12 +158,7 @@ const SoulZapAddLiquidity: FC<SoulZapAddLiquidityProps> = ({
   const parsedAmount = currency
     ? CurrencyAmount.fromRawAmount(
         currency,
-        JSBI.BigInt(
-          parseUnits(
-            getFixedValue(typedValue, currency?.decimals),
-            currency?.decimals,
-          ),
-        ),
+        JSBI.BigInt(getFixedValue(typedValue, currency?.decimals)),
       )
     : undefined;
   const [approvalState, approveCallback] = useApproveCallbackV3(

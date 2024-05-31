@@ -31,7 +31,7 @@ import { useUSDCPricesFromAddresses } from 'utils/useUSDCPrice';
 import { formatReward } from 'utils/formatReward';
 import { useMultipleContractMultipleData } from 'state/multicall/v3/hooks';
 import { useMasterChefContracts } from 'hooks/useContract';
-import { formatUnits } from 'ethers/lib/utils';
+import { formatUnits } from 'ethers';
 import { useFarmingHandlers } from 'hooks/useStakerHandlers';
 import CurrencyLogo from 'components/CurrencyLogo';
 import {
