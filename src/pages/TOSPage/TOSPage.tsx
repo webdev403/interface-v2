@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box } from '@material-ui/core';
+import { Box } from '@mui/material';
 import { Trans, useTranslation } from 'react-i18next';
 
 const TOSPage: React.FC = () => {

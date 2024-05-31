@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Box, Button, useMediaQuery } from '@material-ui/core';
-import { KeyboardArrowDown, Close } from '@material-ui/icons';
-import { useTheme } from '@material-ui/core/styles';
+import { Box, Button, useMediaQuery } from '@mui/material';
+import {  Close } from '@mui/icons-material';
+import { useTheme } from '@mui/material/styles';
 import { useUDDomain, useWalletModalToggle } from 'state/application/hooks';
 import {
   isTransactionRecent,
@@ -14,9 +14,7 @@ import { shortenAddress } from 'utils';
 import { WalletModal } from 'components';
 import { useActiveWeb3React } from 'hooks';
 import styles from 'styles/components/Header.module.scss';
-import QuickLogoWebP from 'assets/images/quickLogo.webp';
 // import { ReactComponent as LightIcon } from 'assets/images/LightIcon.svg';
-import 'components/styles/Header.scss';
 import { useTranslation } from 'react-i18next';
 import { getConfig } from 'config/index';
 import useDeviceWidth from 'hooks/useDeviceWidth';
@@ -331,6 +329,12 @@ const Header: React.FC<{ onUpdateNewsletter: (val: boolean) => void }> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chainId, parsedChain]);
 
+  // function toggleNetworkSelectionModal(
+  //   _event: MouseEvent<HTMLDivElement, MouseEvent>,
+  // ): void {
+  //   throw new Error('Function not implemented.');
+  // }
+
   return (
     <Box className={styles.header}>
       {showNewsletter && (
@@ -351,104 +355,113 @@ const Header: React.FC<{ onUpdateNewsletter: (val: boolean) => void }> = ({
         className={`${styles.menuBar} ${tabletWindowSize ? '' : headerClass}`}
       >
         <NetworkSelection />
-      <Box className={`menuBar ${tabletWindowSize ? '' : headerClass}`}>
-        <WalletModal
-          ENSName={undefined}
-          pendingTransactions={pending}
-          confirmedTransactions={confirmed}
-        />
-        <Link href='/'>
-          <picture>
-            <Image
-              src={mobileWindowSize ? QuickIcon : QuickLogo}
-              alt='QuickLogo'
-              width={mobileWindowSize ? 40 : 195}
-              height={mobileWindowSize ? 40 : 60}
-            />
-          </picture>
-          </Link>
-        <Link to='/'>
-          {mobileWindowSize && (
-            <img src={QuickIcon} alt='QuickLogo' height={40} />
-          )}
-          {!mobileWindowSize && (
+        <Box className={`menuBar ${tabletWindowSize ? '' : headerClass}`}>
+          <WalletModal
+            ENSName={undefined}
+            pendingTransactions={pending}
+            confirmedTransactions={confirmed}
+          />
+          <Link href='/' to={''}>
             <picture>
-              <source height={60} srcSet={QuickLogoWebP} type='image/webp' />
-              <img src={QuickLogo} alt='QuickLogo' height={60} />
+              <Image
+                src={mobileWindowSize ? QuickIcon : QuickLogo}
+                alt='QuickLogo'
+                width={mobileWindowSize ? 40 : 195}
+                height={mobileWindowSize ? 40 : 60}
+              />
             </picture>
-          )}
-        </Link>
-        {!tabletWindowSize && (
-          <Box className={styles.mainMenu}>
-            {menuItems.slice(0, menuItemCountToShow).map((val, i) => (
-              <HeaderDesktopItem key={`header-desktop-item-${i}`} item={val} />
-            ))}
-            {menuItems.slice(menuItemCountToShow, menuItems.length).length >
-              0 && (
-              <Box
-                width='36px'
-                className={`flex justify-center ${styles.menuItem} ${styles.subMenuItem}`}
-              >
-                <MoreHoriz />
-                <Box className={styles.subMenuWrapper}>
-                  <Box className={styles.subMenu}>
-                    {menuItems
-                      .slice(menuItemCountToShow, menuItems.length)
-                      .map((val, i) => (
-                        <HeaderListItem key={'sub-menu' + i} item={val} />
-                      ))}
+          </Link>
+          <Link to='/'>
+            {mobileWindowSize && (
+              <img src={QuickIcon} alt='QuickLogo' height={40} />
+            )}
+            {!mobileWindowSize && (
+              <picture>
+                <source
+                  height={60}
+                  srcSet={'assets/images/quickLogo.webp'}
+                  type='image/webp'
+                />
+                <img src={QuickLogo} alt='QuickLogo' height={60} />
+              </picture>
+            )}
+          </Link>
+          {!tabletWindowSize && (
+            <Box className={styles.mainMenu}>
+              {menuItems.slice(0, menuItemCountToShow).map((val, i) => (
+                <HeaderDesktopItem
+                  key={`header-desktop-item-${i}`}
+                  item={val}
+                />
+              ))}
+              {menuItems.slice(menuItemCountToShow, menuItems.length).length >
+                0 && (
+                <Box
+                  width='36px'
+                  className={`flex justify-center ${styles.menuItem} ${styles.subMenuItem}`}
+                >
+                  <MoreHoriz />
+                  <Box className={styles.subMenuWrapper}>
+                    <Box className={styles.subMenu}>
+                      {menuItems
+                        .slice(menuItemCountToShow, menuItems.length)
+                        .map((val, i) => (
+                          <HeaderListItem key={'sub-menu' + i} item={val} />
+                        ))}
+                    </Box>
                   </Box>
                 </Box>
+              )}
+            </Box>
+          )}
+          {tabletWindowSize && <MobileMenuDrawer menuItems={menuItems} />}
+          <Box>
+            {/* {!parsedChain && (
+              <Box
+                className={styles.networkSelection}
+                onClick={() => toggleNetworkSelectionModal()}
+              >
+                {isSupportedNetwork && (
+                  <Box className={styles.networkSelectionImage}>
+                    {chainId && <Box className={styles.styledPollingDot} />}
+                    <Image
+                      src={config['nativeCurrencyImage']}
+                      alt='network Image'
+                      width={18}
+                      height={18}
+                    />
+                  </Box>
+                )}
+                <small className={styles.networkName}>
+                  {isSupportedNetwork
+                    ? config['networkName']
+                    : t('wrongNetwork')}
+                </small>
+                <KeyboardArrowDown />
+              </Box>
+            )} */}
+            {!parsedChain && <NetworkSelection />}
+
+            {account ? (
+              <Box
+                id='web3-status-connected'
+                className={styles.accountDetails}
+                onClick={toggleWalletModal}
+              >
+                <p>{udDomain ?? shortenAddress(account)}</p>
+                <Image src={WalletIcon} alt='Wallet' width={20} height={20} />
+              </Box>
+            ) : (
+              <Box
+                className={`${styles.connectButton} bg-primary`}
+                onClick={toggleWalletModal}
+              >
+                {t('connectWallet')}
               </Box>
             )}
           </Box>
-        )}
-        {tabletWindowSize && <MobileMenuDrawer menuItems={menuItems} />}
-        <Box>
-          {!parsedChain && (
-            <Box
-              className={styles.networkSelection}
-              onClick={toggleNetworkSelectionModal}
-            >
-              {isSupportedNetwork && (
-                <Box className={styles.networkSelectionImage}>
-                  {chainId && <Box className={styles.styledPollingDot} />}
-                  <Image
-                    src={config['nativeCurrencyImage']}
-                    alt='network Image'
-                    width={18}
-                    height={18}
-                  />
-                </Box>
-              )}
-              <small className={styles.networkName}>
-                {isSupportedNetwork ? config['networkName'] : t('wrongNetwork')}
-              </small>
-              <KeyboardArrowDown />
-            </Box>
-          )}
-          {!parsedChain && <NetworkSelection />}
-
-          {account ? (
-            <Box
-              id='web3-status-connected'
-              className={styles.accountDetails}
-              onClick={toggleWalletModal}
-            >
-              <p>{udDomain ?? shortenAddress(account)}</p>
-              <Image src={WalletIcon} alt='Wallet' width={20} height={20} />
-            </Box>
-          ) : (
-            <Box
-              className={`${styles.connectButton} bg-primary`}
-              onClick={toggleWalletModal}
-            >
-              {t('connectWallet')}
-            </Box>
-          )}
         </Box>
       </Box>
-    </Box>
     </Box>
   );
 };

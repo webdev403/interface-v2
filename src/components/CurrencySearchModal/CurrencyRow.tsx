@@ -1,7 +1,7 @@
 import { ChainId, CurrencyAmount, ETHER, Token } from '@uniswap/sdk';
 import { Currency as V3Currency } from '@uniswap/sdk-core';
 import React, { useState, useCallback, useMemo } from 'react';
-import { Box, Tooltip, CircularProgress, ListItem } from '@material-ui/core';
+import { Box, Tooltip, CircularProgress, ListItem } from '@mui/material';
 import { useActiveWeb3React } from 'hooks';
 import { WrappedTokenInfo } from 'state/lists/hooks';
 import { useAddUserToken, useRemoveUserAddedToken } from 'state/user/hooks';

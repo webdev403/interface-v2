@@ -17,8 +17,8 @@ import UserUpdater from 'state/user/updater';
 import MulticallUpdater from 'state/multicall/updater';
 import MultiCallV3Updater from 'state/multicall/v3/updater';
 import FarmUpdater from 'state/farms/updater';
-import DualFarmUpdater from 'state/dualfarms/updater';
-import CNTFarmUpdater from 'state/cnt/updater';
+// import DualFarmUpdater from 'state/dualfarms/updater';
+// import CNTFarmUpdater from 'state/cnt/updater';
 import SyrupUpdater from 'state/syrups/updater';
 import { Web3ReactManager, Popups, TermsWrapper } from 'components';
 import { appWithTranslation } from 'next-i18next';
@@ -60,8 +60,8 @@ function Updaters() {
       <MultiCallV3Updater />
       <UserUpdater />
       <FarmUpdater />
-      <CNTFarmUpdater />
-      <DualFarmUpdater />
+      {/* <CNTFarmUpdater />
+      <DualFarmUpdater /> */}
       <SyrupUpdater />
     </>
   );

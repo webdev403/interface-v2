@@ -14,7 +14,6 @@ import { event } from 'nextjs-google-analytics';
 import { ArrowDown } from 'react-feather';
 import { Box, Button, CircularProgress } from '@mui/material';
 import {
-  useDefaultsFromURLSearch,
   useDerivedSwapInfo,
   useSwapActionHandlers,
   useSwapState,
@@ -84,7 +83,6 @@ const SwapBestTrade: React.FC<{
   currencyBgClass?: string;
 }> = ({ currencyBgClass }) => {
   const router = useRouter();
-  const loadedUrlParams = useDefaultsFromURLSearch();
   const isProMode = useIsProMode();
   const isSupportedNetwork = useIsSupportedNetwork();
 
@@ -118,11 +116,6 @@ const SwapBestTrade: React.FC<{
 
   // dismiss warning if all imported tokens are in active lists
   const defaultTokens = useAllTokens();
-  const importTokensNotInDefault =
-    urlLoadedTokens &&
-    urlLoadedTokens.filter((token: Token) => {
-      return !(token.address in defaultTokens);
-    });
 
   const { t } = useTranslation();
   const { account, chainId, library } = useActiveWeb3React();

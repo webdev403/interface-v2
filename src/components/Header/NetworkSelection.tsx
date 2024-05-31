@@ -1,9 +1,7 @@
 import React, { useRef } from 'react';
-import { Box } from '@material-ui/core';
-import 'components/styles/Header.scss';
-import { KeyboardArrowDown, KeyboardArrowUp } from '@material-ui/icons';
+import  Box from '@mui/material/Box';
+import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import { useOpenNetworkSelection } from 'state/application/hooks';
-import ActiveDotImage from 'assets/images/chainActiveDot.png';
 import { useIsSupportedNetwork } from 'utils';
 import { useActiveWeb3React } from 'hooks';
 import { getConfig } from 'config/index';
@@ -34,8 +32,9 @@ export const NetworkSelection: React.FC = () => {
         {isSupportedNetwork && (
           <Box className='networkSelectionImage'>
             {chainId && (
+              
               <img
-                src={ActiveDotImage}
+                src="assets/images/chainActiveDot.png"
                 alt='chain active'
                 className='networkActiveDot'
               />

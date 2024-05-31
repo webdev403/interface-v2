@@ -106,7 +106,7 @@ export const MerklFarmCard: React.FC<Props> = ({ farm }) => {
               currency1={token1}
               size={24}
             />
-            <Box className='flex items-center' gridGap={4}>
+            <Box className='flex items-center' gap={4}>
               <p>
                 {token0?.symbol}/{token1?.symbol}
               </p>

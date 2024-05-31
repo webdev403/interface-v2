@@ -58,7 +58,7 @@ export class PassportWallet extends Connector {
       scope: 'openid offline_access transact',
     });
 
-    return (this.eagerConnection = connector.login().then((res) => {
+    return (this.eagerConnection = connector.login().then(() => {
       const provider = connector.connectEvm();
       this.provider = provider;
 

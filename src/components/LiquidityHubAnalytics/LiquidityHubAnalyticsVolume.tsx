@@ -1,11 +1,11 @@
 import React from 'react';
-import { Box } from '@material-ui/core';
+import Box from '@mui/material/Box';
 import { useTranslation } from 'react-i18next';
-import { Skeleton } from '@material-ui/lab';
+import Skeleton from '@mui/material/Skeleton';
 import { formatNumber } from 'utils';
 import dayjs from 'dayjs';
 import { useLHAnalyticsDaily } from 'hooks/useLHAnalytics';
-import { AccessTime } from '@material-ui/icons';
+import { AccessTime } from '@mui/icons-material';
 import utc from 'dayjs/plugin/utc';
 dayjs.extend(utc);
 
@@ -53,7 +53,7 @@ const LiquidityHubAnalyticsVolume: React.FC<Props> = ({
       </Box>
       <Box
         className='flex items-center justify-center flex-col'
-        gridGap={6}
+        gap={6}
         padding='16px 32px'
       >
         {isLoading ? (
@@ -68,7 +68,7 @@ const LiquidityHubAnalyticsVolume: React.FC<Props> = ({
       <Box className='flex justify-between items-center'>
         <small className='text-secondary'>@orbs</small>
         {lhData && (
-          <Box className='flex items-center text-secondary' gridGap={4}>
+          <Box className='flex items-center text-secondary' gap={4}>
             <AccessTime fontSize='small' />
             <small>{dayjs(lhData?.execution_ended_at).fromNow()}</small>
           </Box>

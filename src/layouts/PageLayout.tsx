@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Box, Button, useMediaQuery, useTheme } from '@material-ui/core';
+import { Box, Button, useMediaQuery, useTheme } from '@mui/material';
 import { useActiveWeb3React, useIsProMode, useMasaAnalytics } from 'hooks';
 import NewsletterSignupPanel from './NewsletterSignupPanel';
 import Header from 'components/Header';

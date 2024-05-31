@@ -14,7 +14,7 @@ export const V3FarmAPRTooltipItem: React.FC<{
 
   return (
     <Box>
-      <Box className='flex items-center' component="div" gap="6px">
+      <Box className='flex items-center' component='div' gap='6px'>
         {!!farm.fee && (
           <Box className='farmAPRTitleWrapper bg-textSecondary'>
             <span className='text-gray32'>{farm.fee / 10000}%</span>

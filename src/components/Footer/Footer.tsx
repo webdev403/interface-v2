@@ -5,16 +5,13 @@ import {
   CircularProgress,
   Grid,
   useMediaQuery,
-} from '@material-ui/core';
-import { useTheme } from '@material-ui/core/styles';
-import QUICKLogo from 'assets/images/quickLogo.png';
-import QUICKLogoWebP from 'assets/images/quickLogo.webp';
-import 'components/styles/Footer.scss';
-import { Link, useHistory, useLocation } from 'react-router-dom';
+} from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+import styles from 'styles/components/Footer.module.scss';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useSubscribeNewsletter } from 'hooks/useNewsletterSignup';
 import Image from 'next/image';
-import styles from 'styles/components/Footer.module.scss';
 import { useRouter } from 'next/router';
 const Footer: React.FC = () => {
   const router = useRouter();

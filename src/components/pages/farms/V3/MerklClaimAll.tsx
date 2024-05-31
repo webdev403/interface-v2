@@ -1,12 +1,11 @@
 import React, { useMemo } from 'react';
-import { Box, Button } from '@material-ui/core';
-import ClaimAllBg from 'assets/images/claimAllBg.png';
+import { Box, Button } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useGetMerklFarms } from 'hooks/v3/useV3Farms';
 import { useUSDCPricesFromAddresses } from 'utils/useUSDCPrice';
 import { formatNumber, getTokenFromAddress } from 'utils';
 import { useClaimMerklRewards } from 'hooks/useClaimMerklRewards';
-import { Skeleton } from '@material-ui/lab';
+import { Skeleton } from '@mui/material';
 import { CurrencyLogo, CustomTooltip } from 'components';
 import { useSelectedTokenList } from 'state/lists/hooks';
 import { useActiveWeb3React } from 'hooks';
@@ -68,24 +67,24 @@ export const MerklClaimAll: React.FC = () => {
 
   return (
     <Box className='claimAllBox'>
-      <img src={ClaimAllBg} width='100%' />
-      <Box className='flex flex-col' gridGap={8}>
+      <img src={"assets/images/claimAllBg.png"} width='100%' />
+      <Box className='flex flex-col' gap={8}>
         <p>{t('myrewards')}</p>
         {loadingRewardTokenPrices || loadingFarms ? (
-          <Skeleton variant='rect' width={100} height={27} />
+          <Skeleton variant='rectangular' width={100} height={27} />
         ) : rewards.length > 0 ? (
           <CustomTooltip
             placement='bottom-start'
             title={
-              <Box className='flex flex-col' gridGap={8}>
+              <Box className='flex flex-col' gap={8}>
                 {rewards.map((reward) => (
                   <Box
                     className='flex justify-between'
                     width={200}
                     key={reward.address}
                   >
-                    <Box className='flex items-center' gridGap={8}>
-                      <CurrencyLogo size='16px' currency={reward.token} />
+                    <Box className='flex items-center' gap={8}>
+                      <CurrencyLogo size={16} currency={reward.token} />
                       <small>{reward.symbol}</small>
                     </Box>
                     <small>{formatNumber(reward.unclaimed)}</small>

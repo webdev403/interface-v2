@@ -8,10 +8,10 @@ import {
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
 import { usePairs } from 'data/Reserves';
-import { GlobalConst } from 'constants/index';
+
 import {
   STAKING_REWARDS_INTERFACE,
-  STAKING_DUAL_REWARDS_INTERFACE,
+
 } from 'constants/abis/staking-rewards';
 import { useActiveWeb3React } from 'hooks';
 import {
@@ -33,17 +33,16 @@ import {
 } from 'utils/useUSDCPrice';
 import { unwrappedToken } from 'utils/wrappedCurrency';
 import {
-  getOneYearFee,
+
   getSyrupLPToken,
   initTokenAmountFromCallResult,
-  getCallStateResult,
+
 } from 'utils';
 
 import {
   SyrupInfo,
   LairInfo,
-  StakingBasic,
-  DualStakingBasic,
+
 } from 'types/index';
 import { useDefaultSyrupList } from 'state/syrups/hooks';
 import { Contract } from '@ethersproject/contracts';

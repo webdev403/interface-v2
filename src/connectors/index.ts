@@ -28,6 +28,7 @@ import { PassportWallet } from './PassportWallet';
 const MetamaskIcon = '/assets/images/metamask.png';
 const BlockWalletIcon = '/assets/images/blockwalletIcon.svg';
 const BraveWalletIcon = '/assets/images/braveWalletIcon.png';
+const PassportWalletIcon='/assets/images/PassportWalletIcon.png';
 const cypherDIcon = '/assets/images/cypherDIcon.png';
 const BitGetIcon = '/assets/images/bitget.svg';
 const CoinbaseWalletIcon = '/assets/images/coinbaseWalletIcon.svg';

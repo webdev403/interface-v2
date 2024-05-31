@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Box } from '@material-ui/core';
+import Box from '@mui/material/Box';
 import { useTranslation } from 'react-i18next';
-import { Skeleton } from '@material-ui/lab';
+import Skeleton from '@mui/material/Skeleton';
 import Chart from 'react-apexcharts';
 import { formatCompact } from 'utils';
 import dayjs from 'dayjs';
@@ -40,7 +40,7 @@ const LiquidityHubAnalyticsTotal: React.FC = () => {
 
   return (
     <Box className='panel'>
-      <Box mb={2} className='flex flex-wrap justify-between' gridGap={8}>
+      <Box mb={2} className='flex flex-wrap justify-between' gap={8}>
         <p>{t('liquidityHub')}</p>
         <ChartType
           typeTexts={GlobalData.analytics.CHART_DURATION_TEXTS}

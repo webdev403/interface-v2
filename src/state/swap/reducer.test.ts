@@ -1,6 +1,6 @@
-import { createStore, Store } from 'redux';
+import {  Store } from 'redux';
 import { Field, selectCurrency } from './actions';
-import reducer, { SwapState } from './reducer';
+import  { SwapState } from './reducer';
 
 describe('swap reducer', () => {
   let store: Store<SwapState>;

@@ -6,7 +6,6 @@ import { useIsSupportedNetwork } from 'utils';
 import { useActiveWeb3React } from 'hooks';
 import {
   useWalletModalToggle,
-  useOpenNetworkSelection,
 } from 'state/application/hooks';
 import { useTranslation } from 'next-i18next';
 import styles from 'styles/pages/Home.module.scss';
@@ -25,7 +24,6 @@ const HeroSection: React.FC = () => {
   const { chainId, account } = useActiveWeb3React();
   const chainIdToUse = chainId ?? ChainId.MATIC;
   const toggleWalletModal = useWalletModalToggle();
-  const { setOpenNetworkSelection } = useOpenNetworkSelection();
   const { t } = useTranslation();
   const config = getConfig(chainIdToUse);
   const v2 = config['v2'];

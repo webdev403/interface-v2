@@ -4,7 +4,7 @@ import LPPath from './Paths/LPPath';
 import ApeZapPath from './Paths/ApeZapPath';
 import SoulZapPath from './Paths/SoulZapPath';
 import { useActiveWeb3React, useConnectWallet } from 'hooks';
-import { Button } from '@material-ui/core';
+import { Button } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useIsSupportedNetwork } from 'utils';
 

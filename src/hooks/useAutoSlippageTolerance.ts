@@ -1,7 +1,7 @@
 import { JSBI, Trade as V2Trade, WETH } from '@uniswap/sdk';
 import { Currency, Percent, TradeType } from '@uniswap/sdk-core';
 import { useActiveWeb3React } from 'hooks';
-import { Trade as V3Trade } from 'lib/src/trade';
+import { Trade as V3Trade } from 'lib/trade';
 import { useMemo } from 'react';
 import { useUSDCPriceFromAddress } from 'utils/useUSDCPrice';
 import useGasPrice from './useGasPrice';

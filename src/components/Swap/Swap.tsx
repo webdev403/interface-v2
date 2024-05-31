@@ -13,7 +13,6 @@ import { event } from 'nextjs-google-analytics';
 import { ArrowDown } from 'react-feather';
 import { Box, Button, CircularProgress } from '@mui/material';
 import {
-  useDefaultsFromURLSearch,
   useDerivedSwapInfo,
   useSwapActionHandlers,
   useSwapState,
@@ -72,7 +71,6 @@ import { SLIPPAGE_AUTO } from 'state/user/reducer';
 const Swap: React.FC<{
   currencyBgClass?: string;
 }> = ({ currencyBgClass }) => {
-  const loadedUrlParams = useDefaultsFromURLSearch();
   const router = useRouter();
   const isProMode = useIsProMode();
   const isSupportedNetwork = useIsSupportedNetwork();

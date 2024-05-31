@@ -4,7 +4,7 @@ export const getTokenLogoURL = (address: string, tokenList?: any) => {
     .map((ext) => {
       try {
         // eslint-disable-next-line @typescript-eslint/no-var-requires
-        const image = require(`../assets/tokenLogo/${address.toLowerCase()}${ext}`);
+        const image = require(`../../public/assets/tokenLogo/${address.toLowerCase()}${ext}`);
         return image;
       } catch (e) {
         return;

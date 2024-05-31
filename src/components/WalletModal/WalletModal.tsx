@@ -184,7 +184,7 @@ const WalletModal: React.FC<WalletModalProps> = ({
 
   // get wallets user can switch too, depending on device/browser
   function getOptions() {
-    const { ethereum, web3, phantom } = window as any;
+    const { ethereum, web3 } = window as any;
     const isMetamask = getIsMetaMaskWallet();
     const isBlockWallet = ethereum && ethereum.isBlockWallet;
     const isCypherD = ethereum && ethereum.isCypherD;

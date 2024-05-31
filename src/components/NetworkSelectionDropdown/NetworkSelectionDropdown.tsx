@@ -1,14 +1,13 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Box } from '@material-ui/core';
+import { Box } from '@mui/material/';
 import Image from 'next/image';
-import 'components/styles/NetworkSelectionDropdown.scss';
 import { SUPPORTED_CHAINIDS } from 'constants/index';
 import { getConfig } from 'config/index';
 import { useActiveWeb3React } from 'hooks';
 import { useTranslation } from 'react-i18next';
 import { ChainId } from '@uniswap/sdk';
 import { useIsSupportedNetwork } from 'utils';
-import styles from 'styles/components/NetworkSelectionModal.module.scss';
+import styles from 'styles/components/Dropdown.module.scss';
 import {
   networkConnection,
   walletConnectConnection,
@@ -16,7 +15,6 @@ import {
 } from 'connectors';
 import { useArcxAnalytics } from '@arcxmoney/analytics';
 import CustomTabSwitch from 'components/v3/CustomTabSwitch';
-import ActiveDotImage from 'assets/images/chainActiveDot.png';
 
 const NetworkSelectionDropdown: React.FC = () => {
   const { t } = useTranslation();
@@ -111,7 +109,7 @@ const NetworkSelectionDropdown: React.FC = () => {
             </Box>
             {isSupportedNetwork && chainId && chainId === chain && (
               <img
-                src={ActiveDotImage}
+                src={"assets/images/chainActiveDot.png"}
                 alt='chain active'
                 width={12}
                 height={12}

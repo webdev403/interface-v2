@@ -1,14 +1,14 @@
 import React, { useMemo, useState } from 'react';
-import { Box } from '@material-ui/core';
+import  Box  from '@mui/material/Box';
 import { useTranslation } from 'react-i18next';
 import CustomTable from 'components/CustomTable';
 import { formatNumber, getEtherscanLink, shortenTx } from 'utils';
 import { useActiveWeb3React } from 'hooks';
 import { formatUnits } from 'ethers/lib/utils';
 import { useLHAnalytics } from 'hooks/useLHAnalytics';
-import { Skeleton } from '@material-ui/lab';
+import Skeleton from '@mui/material/Skeleton';
 import dayjs from 'dayjs';
-import { KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
+import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
 import utc from 'dayjs/plugin/utc';
 dayjs.extend(utc);
 
@@ -206,7 +206,8 @@ const LiquidityHubAnalyticsSwap: React.FC = () => {
       <Box
         mb={2}
         className='flex justify-between items-center flex-wrap'
-        gridGap={8}
+        component={"div"}
+        gap={8}
       >
         <p>{t('lhSwaps')}</p>
         <Box className='flex'>

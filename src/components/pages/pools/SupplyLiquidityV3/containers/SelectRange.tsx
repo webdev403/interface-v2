@@ -30,11 +30,6 @@ import {
   getEternalFarmFromTokens,
   getGammaPairsForTokens,
 } from 'utils';
-import GammaLogo from 'assets/images/gammaLogo.png';
-import A51finance from 'assets/images/a51finance.png';
-import DefiedgeLogo from 'assets/images/defiedge.png';
-import AutomaticImage from 'assets/images/automatic.svg';
-import AutomaticImageDark from 'assets/images/automaticDark.svg';
 import { Trans, useTranslation } from 'react-i18next';
 import { useSteerVaults } from 'hooks/v3/useSteerData';
 import { useUnipilotFarmData } from 'hooks/v3/useUnipilotFarms';

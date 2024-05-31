@@ -41,7 +41,6 @@ import { useRouter } from 'next/router';
 import { useWalletModalToggle } from 'state/application/hooks';
 import { Field } from 'state/swap/v3/actions';
 import {
-  useDefaultsFromURLSearch,
   useDerivedSwapInfo,
   useSwapActionHandlers,
   useSwapState,
@@ -77,7 +76,6 @@ const SwapV3Page: React.FC = () => {
   const { account, chainId } = useActiveWeb3React();
   const router = useRouter();
   const chainIdToUse = chainId ?? ChainId.MATIC;
-  const loadedUrlParams = useDefaultsFromURLSearch();
 
   // token warning stuff
   // const [loadedInputCurrency, loadedOutputCurrency] = [
@@ -274,8 +272,7 @@ const SwapV3Page: React.FC = () => {
     allowedSlippage,
   );
   const [
-    nativeConvertApproval,
-    nativeConvertApproveCallback,
+    nativeConvertApproval
   ] = useApproveCallback(parsedAmount, NATIVE_CONVERTER[chainId]);
 
   const {

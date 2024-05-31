@@ -1,8 +1,8 @@
 import React, { ReactElement, useState } from 'react';
-import { Box, TablePagination } from '@material-ui/core';
+import { Box, TablePagination } from '@mui/material';
 
 export interface CustomTableProps<T> {
-  data: any;
+  data: T[];
   mobileHTML: (item: any, index: number) => ReactElement;
 }
 
@@ -24,7 +24,7 @@ const CustomTableMobile: React.FC<CustomTableProps<any>> = ({
         count={count}
         rowsPerPage={10}
         page={page}
-        onPageChange={(event: unknown, newPage: number) => {
+        onPageChange={(_event: unknown, newPage: number) => {
           setPage(newPage);
         }}
       />

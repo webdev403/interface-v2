@@ -53,7 +53,7 @@ export default createReducer(initialState, (builder) =>
       addMulticallListeners,
       (
         state,
-        { payload: { calls, chainId, options: { blocksPerFetch = 1 } = {} } },
+        { payload: { calls, chainId } },
       ) => {
         const listeners: MulticallState['callListeners'] = state.callListeners
           ? state.callListeners

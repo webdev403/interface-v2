@@ -1,7 +1,6 @@
 import { ChainId, Token } from '@uniswap/sdk';
 import { Tags, TokenInfo, TokenList } from '@uniswap/token-lists';
 import { GlobalConst } from 'constants/index';
-import { useToken } from 'hooks/Tokens';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { AppState } from 'state';

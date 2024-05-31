@@ -4,7 +4,6 @@ import useDebounce from 'hooks/useDebounce';
 import useIsWindowVisible from 'hooks/useIsWindowVisible';
 import { updateBlockNumber, updateSoulZap } from './actions';
 import { useMaticPrice } from './hooks';
-import { getEthPrice } from 'utils';
 import { getMaticPrice } from 'utils/v3-graph';
 import { useActiveWeb3React } from 'hooks';
 import { SoulZap_UniV2_ApeBond } from '@soulsolidity/soulzap-v1';

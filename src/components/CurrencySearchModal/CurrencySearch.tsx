@@ -14,7 +14,7 @@ import { useTranslation } from 'next-i18next';
 import { useDispatch } from 'react-redux';
 import { useActiveWeb3React } from 'hooks';
 import { useAllTokens, useToken, useInActiveTokens } from 'hooks/Tokens';
-import { useInactiveTokenList, useSelectedListInfo } from 'state/lists/hooks';
+import { useSelectedListInfo } from 'state/lists/hooks';
 import { selectList } from 'state/lists/actions';
 import { GlobalConst } from 'constants/index';
 import { Close, Search } from '@mui/icons-material';

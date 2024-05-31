@@ -6,7 +6,7 @@ import {
   TransactionConfirmationModal,
   TransactionErrorContent,
 } from 'components';
-import { Box, Button } from '@material-ui/core';
+import { Box, Button } from '@mui/material';
 import { Close } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { calculateGasMargin, formatNumber, getFixedValue } from 'utils';

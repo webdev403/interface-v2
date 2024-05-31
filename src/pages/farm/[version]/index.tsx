@@ -1,9 +1,7 @@
 import React, { useEffect } from 'react';
-import { Box } from '@material-ui/core';
+import { Box } from '@mui/material';
 import { useActiveWeb3React } from 'hooks';
-import { GlobalConst } from 'constants/index';
 import { HypeLabAds } from 'components';
-import { useTranslation } from 'react-i18next';
 import 'pages/styles/farm.scss';
 import V3Farms from 'pages/FarmPage/V3';
 import { getConfig } from '../../config/index';
@@ -16,10 +14,7 @@ const FarmPage = (
 ) => {
   const { chainId } = useActiveWeb3React();
   const router = useRouter();
-  const currentTab = router.query.tab
-    ? (router.query.tab as string)
-    : GlobalConst.v2FarmTab.OTHER_LP;
-  const { t } = useTranslation();
+
   const config = getConfig(chainId);
   const farmAvailable = config['farm']['available'];
 

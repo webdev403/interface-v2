@@ -1,4 +1,3 @@
-import { MaxUint256 } from '@ethersproject/constants';
 import { TransactionResponse } from '@ethersproject/providers';
 import {
   Currency,
@@ -99,7 +98,7 @@ export function useApproveCallback(
       return;
     }
 
-    let useExact = false;
+  
     const estimatedGas = await tokenContract.estimateGas
       .approve(
         spender,
@@ -108,7 +107,7 @@ export function useApproveCallback(
       )
       .catch(() => {
         // general fallback for tokens who restrict approval amounts
-        useExact = true;
+
         return tokenContract.estimateGas.approve(
           spender,
           amountToApprove.quotient.toString(),

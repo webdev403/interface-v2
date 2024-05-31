@@ -32,8 +32,8 @@ import {
 import styles from 'styles/pages/pools/AutomaticLPItemDetails.module.scss';
 import { ApprovalState, useApproveCallback } from 'hooks/useV3ApproveCallback';
 import { tryParseAmount } from 'state/swap/v3/hooks';
-import Loader from 'components/Loader';
-import { Check } from '@material-ui/icons';
+import { CircularProgress } from '@mui/material';
+import { Check } from '@mui/icons-material';
 
 interface IncreaseDefiedgeLiquidityModalProps {
   open: boolean;
@@ -522,7 +522,7 @@ export default function IncreaseDefiedgeLiquidityModal({
               {showApprovalA ? (
                 approvalA === ApprovalState.PENDING ? (
                   <Box className='token-approve-button-loading'>
-                    <Loader stroke='white' />
+                    <CircularProgress size="16px" />
                     <p>
                       {t('approving')} {position.token0?.symbol}
                     </p>
@@ -552,7 +552,7 @@ export default function IncreaseDefiedgeLiquidityModal({
               {showApprovalB ? (
                 approvalB === ApprovalState.PENDING ? (
                   <Box className='token-approve-button-loading'>
-                    <Loader stroke='white' />
+                 <CircularProgress size="16px" />
                     <p>
                       {t('approving')} {position.token1?.symbol}
                     </p>

@@ -40,13 +40,13 @@ export const useClaimMerklRewards = () => {
 
     try {
       const estimatedGas = await merklDistributorContract.estimateGas.claim(
-        tokens.map((t) => account),
+        tokens.map(() => account),
         tokens,
         claims,
         proofs as string[][],
       );
       const response: TransactionResponse = await merklDistributorContract.claim(
-        tokens.map((t) => account),
+        tokens.map(() => account),
         tokens,
         claims,
         proofs as string[][],

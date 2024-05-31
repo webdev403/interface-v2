@@ -11,7 +11,6 @@ import { SearchInput, CustomSwitch } from 'components';
 import AllMerklFarms from './AllMerklFarms';
 import { getConfig } from 'config/index';
 import AllV3Farms from './AllV3Farms';
-import { MerklClaimAll } from './MerklClaimAll';
 import { FeeAmount } from 'v3lib/utils';
 
 export interface V3Farm {
@@ -180,7 +179,7 @@ export default function Farms() {
             <Box
               className='flex items-center flex-wrap'
               width={isMobile ? '100%' : 'auto'}
-              gridGap='16px'
+              gap='16px'
             >
               <Box width={isMobile ? '100%' : 200}>
                 <SearchInput
