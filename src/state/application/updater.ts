@@ -70,7 +70,7 @@ export default function Updater(): null {
       web3ModalLibrary.on('network', (newNetwork) => {
         if (state.chainId && newNetwork.chainId !== state.chainId) {
           setTimeout(() => {
-            document.location.reload();
+            // document.location.reload();
           }, 1500);
         }
       });
@@ -82,7 +82,7 @@ export default function Updater(): null {
         web3ModalLibrary.removeListener('network', (newNetwork) => {
           if (state.chainId && newNetwork.chainId !== state.chainId) {
             setTimeout(() => {
-              document.location.reload();
+              // document.location.reload();
             }, 1500);
           }
         });
